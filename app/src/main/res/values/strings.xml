@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Food Manual</string>
+    <string name="title">Food Manual</string>
+    <string name="latest">Latest Manuals</string>
+    <string name="random">Random Manuals</string>
+    <string name="favorite">Favorite Manuals</string>
+    <string name="search">Search...</string>
+    <string name="no_records_found">No manuals found Chef!!!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
