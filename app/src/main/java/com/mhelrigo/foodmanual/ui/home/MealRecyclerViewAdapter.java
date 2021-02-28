@@ -1,5 +1,9 @@
 package com.mhelrigo.foodmanual.ui.home;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +26,9 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public interface OnMealClicked {
         void onClicked(Meal meal);
+
         void onAddedToFavorites(Meal meal);
+
         void onRemovedFromFavorites(Meal meal);
     }
 
@@ -38,7 +44,7 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     public void setData(List<Meal> newMeals) {
-        if(isWithPagination){
+        if (isWithPagination) {
             removeLoading();
 
             meals.addAll(newMeals);
@@ -51,24 +57,24 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         notifyDataSetChanged();
     }
 
-    public void showLoading(){
+    public void showLoading() {
         meals.add(null);
         notifyItemInserted(meals.size() - 1);
     }
 
-    private void removeLoading(){
+    private void removeLoading() {
         meals.remove(meals.size() - 1);
         notifyItemRemoved(meals.size());
     }
 
-    public void setIsWithPagination(boolean value){
+    public void setIsWithPagination(boolean value) {
         isWithPagination = value;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == Constants.View.VIEW_TYPE_LOADING){
+        if (viewType == Constants.View.VIEW_TYPE_LOADING) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_meals_loading, parent, false);
             return new LoadingViewHolder(view);
         }
@@ -82,8 +88,8 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof ViewHolder){
-            ((ViewHolder)holder).bind(meals.get(position));
+        if (holder instanceof ViewHolder) {
+            ((ViewHolder) holder).bind(meals.get(position));
         }
     }
 
@@ -101,7 +107,8 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         private Meal meal;
         public ItemMealBinding itemMealBinding;
-        boolean isFavorite;
+        private boolean isFavorite;
+        private ObjectAnimator animator;
 
         public ViewHolder(@NonNull ItemMealBinding itemMealBinding) {
             super(itemMealBinding.getRoot());
@@ -114,14 +121,24 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             });
 
             itemMealBinding.imageViewFavorite.setOnClickListener(v -> {
-                if (isFavorite){
+                if (isFavorite) {
                     itemMealBinding.imageViewFavorite.setImageDrawable(v.getContext().getResources().getDrawable(R.drawable.ic_favorite_1));
                     onMealClicked.onRemovedFromFavorites(meal);
+                    animator = ObjectAnimator.ofPropertyValuesHolder(itemMealBinding.imageViewFavorite, PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f), PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f));
+                    animator.setRepeatCount(1);
+                    animator.setRepeatMode(ObjectAnimator.REVERSE);
+                    animator.setDuration(100);
+                    animator.start();
                     if (mealsType.equals(MealsType.FAVORITE)) {
                         meals.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
                     }
-                }else {
+                } else {
+                    animator = ObjectAnimator.ofPropertyValuesHolder(itemMealBinding.imageViewFavorite, PropertyValuesHolder.ofFloat(View.SCALE_X, 1.5f), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.5f));
+                    animator.setRepeatCount(1);
+                    animator.setRepeatMode(ObjectAnimator.REVERSE);
+                    animator.setDuration(100);
+                    animator.start();
                     meal.setFavorite(true);
                     itemMealBinding.imageViewFavorite.setImageDrawable(v.getContext().getResources().getDrawable(R.drawable.ic_favorite));
                     onMealClicked.onAddedToFavorites(meal);

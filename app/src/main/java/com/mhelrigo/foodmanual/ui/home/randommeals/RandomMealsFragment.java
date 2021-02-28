@@ -60,7 +60,7 @@ public class RandomMealsFragment extends DaggerFragment {
         mHomeViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(HomeViewModel.class);
         mMealViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
 
-        mHomeViewModel.fetchRandomMeal();
+        mHomeViewModel.fetchRandomMeal(false);
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
     }
@@ -113,7 +113,7 @@ public class RandomMealsFragment extends DaggerFragment {
                             isLoadingNetworkDataFetch = true;
                             mMealRecyclerViewAdapter.setIsWithPagination(true);
 
-                            mHomeViewModel.fetchRandomMeal();
+                            mHomeViewModel.fetchRandomMeal(false);
                         }
                     }
                 }
@@ -129,7 +129,7 @@ public class RandomMealsFragment extends DaggerFragment {
 
         binding.shimmerFrameLayoutMeals.startShimmer();
         binding.shimmerFrameLayoutMeals.setVisibility(View.VISIBLE);
-        mHomeViewModel.getRandomMeals().observe(getViewLifecycleOwner(), meals -> {
+        mHomeViewModel.getRandomMeals(false).observe(getViewLifecycleOwner(), meals -> {
             isLoadingNetworkDataFetch = false;
 
             if (meals == null) {
@@ -137,7 +137,7 @@ public class RandomMealsFragment extends DaggerFragment {
             }
 
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals().getValue().getMealList().get(0));
+                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals(false).getValue().getMealList().get(0));
             }
 
             mMealRecyclerViewAdapter.setData(meals.getMealList());
@@ -149,9 +149,9 @@ public class RandomMealsFragment extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mHomeViewModel.getRandomMeals().getValue() != null) {
+        if (mHomeViewModel.getRandomMeals(false).getValue() != null) {
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals().getValue().getMealList().get(0));
+                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals(false).getValue().getMealList().get(0));
             }
         }
     }
@@ -162,7 +162,6 @@ public class RandomMealsFragment extends DaggerFragment {
                 mMealViewModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
             }
         }
-        mHomeViewModel.fetchLatestMeals();
         getActivity().onBackPressed();
     }
 }

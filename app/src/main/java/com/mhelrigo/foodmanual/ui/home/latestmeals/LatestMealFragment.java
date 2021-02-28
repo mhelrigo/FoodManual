@@ -118,7 +118,7 @@ public class LatestMealFragment extends DaggerFragment {
                             isLoadingNetworkDataFetch = true;
                             mMealRecyclerViewAdapter.setIsWithPagination(true);
 
-                            mHomeViewModel.fetchRandomMeal();
+                            mHomeViewModel.fetchRandomMeal(true);
                         }
                     }
                 }
@@ -142,7 +142,7 @@ public class LatestMealFragment extends DaggerFragment {
             hideLoading();
         });
 
-        mHomeViewModel.getRandomMeals().observe(getViewLifecycleOwner(), meals -> {
+        mHomeViewModel.getRandomMeals(true).observe(getViewLifecycleOwner(), meals -> {
             if (meals == null) {
                 return;
             }
@@ -150,7 +150,7 @@ public class LatestMealFragment extends DaggerFragment {
             isLoadingNetworkDataFetch = false;
 
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals().getValue().getMealList().get(0));
+                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals(true).getValue().getMealList().get(0));
             }
 
             mMealRecyclerViewAdapter.setData(meals.getMealList());

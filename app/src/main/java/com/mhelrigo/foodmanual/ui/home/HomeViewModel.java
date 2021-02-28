@@ -45,11 +45,13 @@ public class HomeViewModel extends BaseViewModel {
     private DataRepository mDataRepository;
     private CompositeDisposable mCompositeDisposable;
     private MutableLiveData<Meals> mLatestMealsMutableLiveData;
+    private MutableLiveData<Meals> mLatestMealsPaginationMutableLiveData;
     private MutableLiveData<Meals> mRandomMealsMutableLiveData;
     protected ObservableBoolean isNoRecords = new ObservableBoolean(false);
 
     private static final int RANDOM_MEAL_REQUEST = 1;
     private static final int LATEST_MEAL_REQUEST = 2;
+    private static final int RANDOM_MEAL_PAGINATION_REQUEST = 3;
     /*private static final int SEARCHED_MEALS_REQUEST = 3;*/
 
     private int requestRetryType = -1;
@@ -68,12 +70,13 @@ public class HomeViewModel extends BaseViewModel {
         this.mDataRepository = dataRepository;
         mCompositeDisposable = new CompositeDisposable();
         mLatestMealsMutableLiveData = new MutableLiveData<>();
+        mLatestMealsPaginationMutableLiveData = new MutableLiveData<>();
         mRandomMealsMutableLiveData = new MutableLiveData<>();
         mutableLiveDataMeals = new MutableLiveData<>();
         mealList = new ArrayList<>();
     }
 
-    public void fetchMeals() {
+    /*public void fetchMeals() {
         Log.e(TAG, "Meals Size : " + mealList.size() + " currentMealIndex : " + currentMealIndex);
         if (currentMealIndex >= mealList.size()) {
             fetchRandomMeal();
@@ -87,7 +90,7 @@ public class HomeViewModel extends BaseViewModel {
         }
         currentMealPage++;
         mutableLiveDataMeals.postValue(meals1);
-    }
+    }*/
 
     public void fetchLatestMeals() {
         Log.e(TAG, "fetchLatestMeals");
@@ -117,7 +120,7 @@ public class HomeViewModel extends BaseViewModel {
                 }));
     }
 
-    public void fetchRandomMeal() {
+    public void fetchRandomMeal(boolean isPagination) {
         Log.e(TAG, "fetchRandomMeal");
         mCompositeDisposable.add(mDataRepository.fetchRandomMeals().zipWith(mDataRepository.fetchFavorites(), (meals, meals2) -> {
             if (meals2.size() == 0) {
@@ -136,11 +139,19 @@ public class HomeViewModel extends BaseViewModel {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(meals -> {
-                    mRandomMealsMutableLiveData.postValue(meals);
+                    if (isPagination) {
+                        mLatestMealsPaginationMutableLiveData.postValue(meals);
+                    } else {
+                        mRandomMealsMutableLiveData.postValue(meals);
+                    }
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         isRetryNetworkRequest = true;
-                        requestRetryType = RANDOM_MEAL_REQUEST;
+                        if (isPagination) {
+                            requestRetryType = RANDOM_MEAL_PAGINATION_REQUEST;
+                        } else {
+                            requestRetryType = RANDOM_MEAL_REQUEST;
+                        }
                     }
                 }));
     }
@@ -191,7 +202,10 @@ public class HomeViewModel extends BaseViewModel {
         return mLatestMealsMutableLiveData;
     }
 
-    public LiveData<Meals> getRandomMeals() {
+    public LiveData<Meals> getRandomMeals(boolean isPagination) {
+        if (isPagination) {
+            return mLatestMealsPaginationMutableLiveData;
+        }
         return mRandomMealsMutableLiveData;
     }
 
@@ -219,10 +233,13 @@ public class HomeViewModel extends BaseViewModel {
     protected void onRetryNetworkRequests() {
         if (isRetryNetworkRequest && isNetworkConnected.get()) {
             if (requestRetryType == RANDOM_MEAL_REQUEST) {
-                fetchRandomMeal();
+                fetchRandomMeal(false);
             } else if (requestRetryType == LATEST_MEAL_REQUEST) {
                 fetchLatestMeals();
-            } /*else if (requestRetryType == SEARCHED_MEALS_REQUEST) {
+            } else if (requestRetryType == RANDOM_MEAL_PAGINATION_REQUEST) {
+                fetchRandomMeal(true);
+            }
+            /*else if (requestRetryType == SEARCHED_MEALS_REQUEST) {
                 fetchMealByCharacters(searchFilterTemp);
             }*/
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,9 @@ public class FavoriteMealFragment extends DaggerFragment {
             @Override
             public void onRemovedFromFavorites(Meal meal) {
                 mMealViewModel.removeFromFavorites(meal);
+                if (mHomeViewModel.getMealsData().getValue().getMealList().contains(meal)){
+                    Log.e(TAG, "COntainers");
+                }
             }
         });
 
@@ -127,9 +131,9 @@ public class FavoriteMealFragment extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mHomeViewModel.getRandomMeals().getValue() != null) {
+        if (mMealViewModel.getFavouriteMeals().getValue() != null) {
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals().getValue().getMealList().get(0));
+                mMealViewModel.setSelectedMeal(mMealViewModel.getFavouriteMeals().getValue().get(0));
             }
         }
     }

@@ -381,12 +381,13 @@ public class Meal {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Meal)) {
+            Log.e("equals", "equals");
             return false;
         }
 
         Meal meal = (Meal) o;
-        return idMeal.equals(meal.idMeal)
-                && isFavorite != meal.isFavorite;
+        Log.e("equals", "not equals");
+        return idMeal.equals(meal.idMeal);
     }
 
     @Override
