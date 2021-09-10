@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
 
         <variable
             name="viewModel"
@@ -23,126 +24,131 @@
             type="com.mhelrigo.foodmanual.ui.home.latestmeals.LatestMealFragment" />
     </data>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.home.latestmeals.LatestMealFragment">
+
+        <ImageView
+            android:id="@+id/imageViewMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="TODO"
+            android:onClick="@{v -> view.navigationDrawer.openDrawer()}"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_show_menu" />
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/base_16"
+            android:fontFamily="@font/gadugi"
+            android:text="@string/latest"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/base_30"
+            android:visibility="@{viewModel.isNoRecords ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewMenu" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollViewLatestMeals"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".ui.home.latestmeals.LatestMealFragment">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle">
 
-            <ImageView
-                android:id="@+id/imageViewMenu"
-                android:onClick="@{v -> view.navigationDrawer.openDrawer()}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="TODO"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_show_menu" />
-
-            <TextView
-                android:id="@+id/textViewTitle"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewLatest"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="@dimen/base_16"
-                android:fontFamily="@font/gadugi"
-                android:text="@string/latest"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/base_30"
-                android:visibility="@{viewModel.isNoRecords ? View.INVISIBLE : View.VISIBLE}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewMenu" />
+                android:layout_marginEnd="16dp"
+                android:adapter="@{adapter}"
+                android:layoutManager="@{layoutManager}"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="@dimen/base_8"
+                app:layout_constraintVertical_bias="0.0"
+                tools:listitem="@layout/item_meal" />
+        </androidx.core.widget.NestedScrollView>
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScrollViewLatestMeals"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayoutMeals"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
+            app:layout_constraintVertical_bias="0.0">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.49"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewTitle">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewLatest"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:adapter="@{adapter}"
-                    android:layoutManager="@{layoutManager}"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingTop="@dimen/base_8"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:listitem="@layout/item_meal" />
-            </androidx.core.widget.NestedScrollView>
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerFrameLayoutMeals"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.49"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
-                app:layout_constraintVertical_bias="0.0">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="vertical">
+                <include layout="@layout/item_meal_shimmer" />
 
-                    <include layout="@layout/item_meal_shimmer" />
-                    <include layout="@layout/item_meal_shimmer" />
-                    <include layout="@layout/item_meal_shimmer" />
-                    <include layout="@layout/item_meal_shimmer" />
-                    <include layout="@layout/item_meal_shimmer" />
-                    <include layout="@layout/item_meal_shimmer" />
+                <include layout="@layout/item_meal_shimmer" />
 
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
+                <include layout="@layout/item_meal_shimmer" />
 
-            <!--<com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutSearch"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
+                <include layout="@layout/item_meal_shimmer" />
+
+                <include layout="@layout/item_meal_shimmer" />
+
+                <include layout="@layout/item_meal_shimmer" />
+
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!--<com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutSearch"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginStart="@dimen/base_8"
+            android:layout_marginEnd="@dimen/base_8"
+            android:hint="@string/search"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/ic_search"
+            app:startIconDrawable="@drawable/ic_clear"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewMenu">
+
+            &lt;!&ndash;<com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/base_16"
-                android:layout_marginStart="@dimen/base_8"
-                android:layout_marginEnd="@dimen/base_8"
-                android:hint="@string/search"
-                app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_search"
-                app:startIconDrawable="@drawable/ic_clear"
-                app:hintEnabled="false"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewMenu">
+                android:onTextChanged="@{(text, start, before, count) -> view.onSearchFilterChanged(text)}" />&ndash;&gt;
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-                &lt;!&ndash;<com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onTextChanged="@{(text, start, before, count) -> view.onSearchFilterChanged(text)}" />&ndash;&gt;
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>-->
 
-            </com.google.android.material.textfield.TextInputLayout>-->
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_records_found"
-                android:textSize="@dimen/base_16"
-                android:visibility="@{viewModel.isNoRecords ? View.VISIBLE : View.INVISIBLE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_records_found"
+            android:textSize="@dimen/base_16"
+            android:visibility="@{viewModel.isNoRecords ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

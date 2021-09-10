@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.crashlytics'
 
+def foodManualPropertiesFile = rootProject.file("foodmanual.properties")
+def foodManualProperties = new Properties()
+foodManualProperties.load(new FileInputStream(foodManualPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -13,6 +17,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled=true
+
+        buildConfigField("String", "API_KEY", foodManualProperties['API_KEY'])
     }
     buildTypes {
         release {

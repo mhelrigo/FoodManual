@@ -87,20 +87,20 @@ public class FavoriteMealFragment extends DaggerFragment {
             @Override
             public void onAddedToFavorites(Meal meal) {
                 mMealViewModel.addToFavorites(meal);
+                mHomeViewModel.manageFavorite(meal, true);
             }
 
             @Override
             public void onRemovedFromFavorites(Meal meal) {
                 mMealViewModel.removeFromFavorites(meal);
-                if (mHomeViewModel.getMealsData().getValue().getMealList().contains(meal)){
-                    Log.e(TAG, "COntainers");
-                }
+                mHomeViewModel.manageFavorite(meal, false);
             }
         });
 
         binding.setView(this);
         binding.setAdapter(mMealRecyclerViewAdapter);
         binding.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.setViewModel(mMealViewModel);
 
         return binding.getRoot();
     }
@@ -108,14 +108,11 @@ public class FavoriteMealFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.shimmerFrameLayoutMeals.startShimmer();
-        binding.shimmerFrameLayoutMeals.setVisibility(View.VISIBLE);
+        showLoading();
         mMealViewModel.getFavouriteMeals().observe(getViewLifecycleOwner(), meals -> {
-            isLoadingNetworkDataFetch = false;
+            hideLoading();
 
-            if (meals == null) {
-                return;
-            }
+            isLoadingNetworkDataFetch = false;
 
             if (isTablet) {
                 if (mMealViewModel.getFavouriteMeals().getValue().size() > 0)
@@ -123,8 +120,6 @@ public class FavoriteMealFragment extends DaggerFragment {
             }
 
             mMealRecyclerViewAdapter.setData(meals);
-            binding.shimmerFrameLayoutMeals.stopShimmer();
-            binding.shimmerFrameLayoutMeals.setVisibility(View.GONE);
         });
     }
 
@@ -144,7 +139,16 @@ public class FavoriteMealFragment extends DaggerFragment {
                 mMealViewModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
             }
         }
-        mHomeViewModel.fetchLatestMeals();
         getActivity().onBackPressed();
+    }
+
+    private void showLoading() {
+        binding.shimmerFrameLayoutMeals.startShimmer();
+        binding.shimmerFrameLayoutMeals.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        binding.shimmerFrameLayoutMeals.stopShimmer();
+        binding.shimmerFrameLayoutMeals.setVisibility(View.GONE);
     }
 }

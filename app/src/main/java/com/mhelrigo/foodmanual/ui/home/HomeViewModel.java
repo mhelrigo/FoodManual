@@ -55,15 +55,6 @@ public class HomeViewModel extends BaseViewModel {
     /*private static final int SEARCHED_MEALS_REQUEST = 3;*/
 
     private int requestRetryType = -1;
-    private String searchFilterTemp = "";
-
-    private List<Meal> mealList;
-    private MutableLiveData<List<Meal>> mutableLiveDataMeals;
-
-
-    private int currentMealPage = 1;
-    private int currentMealIndex = 0;
-    private int pageSize = 10;
 
     @Inject
     public HomeViewModel(DataRepository dataRepository) {
@@ -72,25 +63,7 @@ public class HomeViewModel extends BaseViewModel {
         mLatestMealsMutableLiveData = new MutableLiveData<>();
         mLatestMealsPaginationMutableLiveData = new MutableLiveData<>();
         mRandomMealsMutableLiveData = new MutableLiveData<>();
-        mutableLiveDataMeals = new MutableLiveData<>();
-        mealList = new ArrayList<>();
     }
-
-    /*public void fetchMeals() {
-        Log.e(TAG, "Meals Size : " + mealList.size() + " currentMealIndex : " + currentMealIndex);
-        if (currentMealIndex >= mealList.size()) {
-            fetchRandomMeal();
-            return;
-        }
-
-        List<Meal> meals1 = new ArrayList<>();
-        currentMealIndex = (currentMealPage - 1) * pageSize;
-        for (int i = currentMealIndex; i < Math.min(currentMealIndex + pageSize, mealList.size()); i++) {
-            meals1.add(mealList.get(i));
-        }
-        currentMealPage++;
-        mutableLiveDataMeals.postValue(meals1);
-    }*/
 
     public void fetchLatestMeals() {
         Log.e(TAG, "fetchLatestMeals");
@@ -111,12 +84,16 @@ public class HomeViewModel extends BaseViewModel {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(meals -> {
                     mLatestMealsMutableLiveData.postValue(meals);
+                    setIsNoRecords(false);
                 }, throwable -> {
                     Log.e(TAG, throwable.getMessage());
                     if (throwable instanceof HttpException) {
                         isRetryNetworkRequest = true;
                         requestRetryType = LATEST_MEAL_REQUEST;
+                        return;
                     }
+
+                    isNoRecords.set(true);
                 }));
     }
 
@@ -152,51 +129,22 @@ public class HomeViewModel extends BaseViewModel {
                         } else {
                             requestRetryType = RANDOM_MEAL_REQUEST;
                         }
+                        return;
                     }
                 }));
     }
 
-    /*public void fetchMealByCharacters(String filters) {
-        setIsNoRecords(false);
-
-        if (filters.equals("") || filters.equals(" ")) {
-            fetchLatestMeals();
-
-            Log.e(TAG, "fetchMealByCharacters null");
-            return;
+    public void manageFavorite(Meal meal, boolean isFavorite) {
+        if (mLatestMealsMutableLiveData.getValue().getMealList().contains(meal)) {
+            mLatestMealsMutableLiveData.getValue().getMealList().get(mLatestMealsMutableLiveData.getValue().getMealList().indexOf(meal)).setFavorite(isFavorite);
+            setLatestMeal(mLatestMealsMutableLiveData.getValue());
         }
 
-        searchFilterTemp = filters;
-
-        mCompositeDisposable.clear();
-        mCompositeDisposable.add(mDataRepository.fetchMealsByCharacter(searchFilterTemp).zipWith(mDataRepository.fetchFavorites(), (meals, meals2) -> {
-            if (meals2.size() == 0) {
-                return meals;
-            }
-
-            for (int index = 0; index <= meals.getMealList().size() - 1; index++) {
-                for (Meal favorites : meals2) {
-                    if (meals.getMealList().get(index).getIdMeal().equals(favorites.getIdMeal())) {
-                        meals.getMealList().get(index).setFavorite(true);
-                    }
-                }
-            }
-
-            return meals;
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(meals -> {
-                    Log.e(TAG, "fetchMealByCharacters : " + meals.getMealList().size());
-                    *//*mLatestMealsMutableLiveData.postValue(meals);*//*
-                    mealList = meals.getMealList();
-                    fetchMeals();
-                }, throwable -> {
-                    Log.e(TAG, "fetchMealByCharacters: " + throwable.getMessage());
-                    if (throwable instanceof HttpException) {
-                        isRetryNetworkRequest = true;
-                        requestRetryType = SEARCHED_MEALS_REQUEST;
-                    }
-                }));
-    }*/
+        if (mRandomMealsMutableLiveData.getValue().getMealList().contains(meal)) {
+            mRandomMealsMutableLiveData.getValue().getMealList().get(mRandomMealsMutableLiveData.getValue().getMealList().indexOf(meal)).setFavorite(isFavorite);
+            setLatestMeal(mRandomMealsMutableLiveData.getValue());
+        }
+    }
 
     public LiveData<Meals> getMealsData() {
         return mLatestMealsMutableLiveData;
@@ -219,10 +167,6 @@ public class HomeViewModel extends BaseViewModel {
 
     public void setIsNoRecords(boolean isNoRecords) {
         this.isNoRecords.set(isNoRecords);
-    }
-
-    public LiveData<List<Meal>> getMeals() {
-        return mutableLiveDataMeals;
     }
 
     public ObservableBoolean getIsNoRecords() {

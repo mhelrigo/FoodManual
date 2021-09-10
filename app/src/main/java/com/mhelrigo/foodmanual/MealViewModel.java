@@ -1,7 +1,9 @@
 package com.mhelrigo.foodmanual;
 
 import android.util.Log;
+import android.view.View;
 
+import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -40,6 +42,8 @@ public class MealViewModel extends BaseViewModel {
     private MutableLiveData<Meal> mMealMutableLiveData;
     private MutableLiveData<List<Meal>> mFavoriteMutableLiveData;
 
+    private ObservableBoolean isNoFavorites = new ObservableBoolean(true);
+
     private String selectedMealId;
 
     @Inject
@@ -48,6 +52,8 @@ public class MealViewModel extends BaseViewModel {
         mCompositeDisposable = new CompositeDisposable();
         mMealMutableLiveData = new MutableLiveData<>();
         mFavoriteMutableLiveData = new MutableLiveData<>();
+
+        fetchFavorites();
     }
 
     public void fetchMealById(String id) {
@@ -67,6 +73,10 @@ public class MealViewModel extends BaseViewModel {
     }
 
     public void setSelectedMeal(Meal meal) {
+        if (mFavoriteMutableLiveData.getValue().contains(meal)) {
+
+        }
+
         if (meal != null) {
             firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL + meal.getStrMeal().replaceAll("\\s", "_"), null);
         }
@@ -145,16 +155,31 @@ public class MealViewModel extends BaseViewModel {
     }
 
     public void fetchFavorites() {
-        Log.e(TAG, "fetchFavorites");
         mCompositeDisposable.add(mDataRepository.fetchFavorites()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(meals -> mFavoriteMutableLiveData.postValue(meals))
+                .subscribe(meals -> {
+                    mFavoriteMutableLiveData.postValue(meals);
+                    Log.e(TAG, "meals.size()" + meals.size());
+                    if (meals.size() <= 0) {
+                        setIsNoFavorites(true);
+                        return;
+                    }
+                    setIsNoFavorites(false);
+                })
         );
     }
 
     public LiveData<List<Meal>> getFavouriteMeals() {
         return mFavoriteMutableLiveData;
+    }
+
+    public void setIsNoFavorites(boolean isNoFavorites) {
+        this.isNoFavorites.set(isNoFavorites);
+    }
+
+    public ObservableBoolean getIsNoFavorites() {
+        return isNoFavorites;
     }
 
     @Override

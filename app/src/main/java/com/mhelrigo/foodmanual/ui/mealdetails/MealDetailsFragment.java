@@ -1,6 +1,8 @@
 package com.mhelrigo.foodmanual.ui.mealdetails;
 
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.mhelrigo.foodmanual.MealViewModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealDetailsBinding;
 import com.mhelrigo.foodmanual.ui.connectionreceiver.ConnectivityReceiver;
+import com.mhelrigo.foodmanual.ui.home.HomeViewModel;
 import com.mhelrigo.foodmanual.utils.Constants;
 import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
@@ -45,11 +48,15 @@ public class MealDetailsFragment extends DaggerFragment {
     RequestManager requestManager;
 
     private MealViewModel mMealViewModel;
+    private HomeViewModel mHomeViewModel;
+
     private TagsRecyclerViewAdapter tagsRecyclerViewAdapter;
 
     private String mWatchUrl, mSourceUrl;
 
     FragmentMealDetailsBinding binding;
+
+    private ObjectAnimator animator;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -62,6 +69,7 @@ public class MealDetailsFragment extends DaggerFragment {
 
         mMealViewModel
                 = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
+        mHomeViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(HomeViewModel.class);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("mealId")) {
@@ -131,13 +139,13 @@ public class MealDetailsFragment extends DaggerFragment {
         }
     }
 
-    private void startLoading(){
+    private void startLoading() {
         binding.shimmerFrameLayoutMealDetail.startShimmer();
         binding.constraintLayoutShimmer.setVisibility(View.VISIBLE);
         binding.constraintLayoutMealDetail.setVisibility(View.GONE);
     }
 
-    private void stopLoading(){
+    private void stopLoading() {
         binding.shimmerFrameLayoutMealDetail.stopShimmer();
         binding.constraintLayoutShimmer.setVisibility(View.GONE);
         binding.constraintLayoutMealDetail.setVisibility(View.VISIBLE);
@@ -157,5 +165,37 @@ public class MealDetailsFragment extends DaggerFragment {
 
     public void back() {
         getActivity().onBackPressed();
+        mHomeViewModel.fetchLatestMeals();
+    }
+
+    public void favoriteToggle() {
+        if (mMealViewModel.getSelectedMeal().getValue().isFavorite()) {
+            removeFromFavorites();
+            return;
+        }
+
+        addToFavorites();
+    }
+
+    public void addToFavorites() {
+        binding.imageViewFavorite.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_favorite));
+        animateFavoriteIcon(1.5f, 1.5f);
+        mMealViewModel.getSelectedMeal().getValue().setFavorite(true);
+        mMealViewModel.addToFavorites(mMealViewModel.getSelectedMeal().getValue());
+    }
+
+    public void removeFromFavorites() {
+        binding.imageViewFavorite.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_favorite_1));
+        animateFavoriteIcon(0.5f, 0.5f);
+        mMealViewModel.getSelectedMeal().getValue().setFavorite(false);
+        mMealViewModel.removeFromFavorites(mMealViewModel.getSelectedMeal().getValue());
+    }
+
+    public void animateFavoriteIcon(float xVal, float yVal) {
+        animator = ObjectAnimator.ofPropertyValuesHolder(binding.imageViewFavorite, PropertyValuesHolder.ofFloat(View.SCALE_X, xVal), PropertyValuesHolder.ofFloat(View.SCALE_Y, yVal));
+        animator.setRepeatCount(1);
+        animator.setRepeatMode(ObjectAnimator.REVERSE);
+        animator.setDuration(100);
+        animator.start();
     }
 }

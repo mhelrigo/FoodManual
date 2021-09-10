@@ -1,8 +1,10 @@
 package com.mhelrigo.foodmanual.utils;
 
+import com.mhelrigo.foodmanual.BuildConfig;
+
 public class Constants {
     public static final String PACKAGE_NAME = "com.mhelrigo.foodmanual.utils";
-    public static final String BASE_URL = "https://www.themealdb.com/api/json/v2/9973533/";
+    public static final String BASE_URL = "https://www.themealdb.com/api/json/v2/" + BuildConfig.API_KEY + "/";
 
     public static final String RANDOM_MEALS_URL = "randomselection.php";
     public static final String CATEGORIES_URL = "categories.php";

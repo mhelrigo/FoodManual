@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -17,13 +18,17 @@
         <variable
             name="layoutManager"
             type="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <variable
+            name="viewModel"
+            type="com.mhelrigo.foodmanual.ui.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.home.randommeals.RandomMealsFragment"
-        android:background="?android:attr/windowBackground">
+        android:background="?android:attr/windowBackground"
+        tools:context=".ui.home.randommeals.RandomMealsFragment">
 
         <ImageView
             android:id="@+id/imageView22"
@@ -35,9 +40,9 @@
 
         <ImageView
             android:id="@+id/imageViewBack"
-            android:onClick="@{v -> view.goBack()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{v -> view.goBack()}"
             app:layout_constraintBottom_toBottomOf="@+id/imageView22"
             app:layout_constraintEnd_toEndOf="@+id/imageView22"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +59,7 @@
             android:text="@string/random"
             android:textColor="@android:color/black"
             android:textSize="30sp"
+            android:visibility="@{viewModel.isNoRecords ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView22" />
 
@@ -95,17 +101,29 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewLatest"
-                android:adapter="@{adapter}"
-                android:layoutManager="@{layoutManager}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:adapter="@{adapter}"
+                android:layoutManager="@{layoutManager}"
                 android:nestedScrollingEnabled="false"
                 android:paddingTop="8dp"
                 app:layout_constraintVertical_bias="0.0"
                 tools:listitem="@layout/item_meal" />
         </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_records_found"
+            android:textSize="@dimen/base_16"
+            android:visibility="@{viewModel.isNoRecords ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

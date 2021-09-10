@@ -100,6 +100,7 @@ public class RandomMealsFragment extends DaggerFragment {
         binding.setView(this);
         binding.setAdapter(mMealRecyclerViewAdapter);
         binding.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.setViewModel(mHomeViewModel);
 
         binding.nestedScrollViewRandomMeals.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
