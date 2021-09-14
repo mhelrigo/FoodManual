@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "752473089760",
+    "firebase_url": "https://foodmanual-179c4.firebaseio.com",
+    "project_id": "foodmanual-179c4",
+    "storage_bucket": "foodmanual-179c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752473089760:android:34de2dcde4eae9c70f9285",
+        "android_client_info": {
+          "package_name": "com.mhelrigo.foodmanual"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752473089760-q9e5ncdrt2haed9d8o3a8r9a27u2ur39.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mhelrigo.foodmanual",
+            "certificate_hash": "4321552295ed4ee465579083e1df265346a08bc2"
+          }
+        },
+        {
+          "client_id": "752473089760-93ev14bcje848jl06dddmjr4a6gulfmm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASP8ZoixivhthKiPUz-d14Dho2F7uSZwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752473089760-93ev14bcje848jl06dddmjr4a6gulfmm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
