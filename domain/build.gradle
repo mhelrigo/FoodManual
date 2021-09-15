@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+}
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+java {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation dep.rx.rxJava
+    implementation dep.test.jUnit
+    implementation dep.test.mockito
+}

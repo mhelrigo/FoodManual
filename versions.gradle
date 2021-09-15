@@ -1,0 +1,104 @@
+ext.deps = [:]
+
+def versions = [:]
+versions.gradle = "7.0.0"
+versions.googleServices = "4.3.10"
+versions.crashlyticsGradle = "2.7.1"
+versions.appCompat = "1.0.2"
+versions.constraintLayout = "1.1.3"
+versions.lagacySupportV4 = "1.0.0"
+versions.jUnit = "4.12"
+versions.extJUnit = "1.1.0"
+versions.espressoCore = "3.1.1"
+versions.dagger = "2.35.1"
+versions.glide = "4.11.0"
+versions.lifeCycleViewModel = "2.2.0"
+versions.retrofit = "2.7.2"
+versions.rxJava = "2.2.18"
+versions.rxJavaRxAndroid = "2.1.1"
+versions.httpLoggingInterceptor = "4.4.0"
+versions.circleImageView = "3.1.0"
+versions.recyclerView = "1.1.0"
+versions.cardview = "1.1.0"
+versions.material = "1.2.1"
+versions.shimmer = "0.5.0"
+versions.firebaseAnalytics = "17.4.0"
+versions.firebaseCrashlytics = "17.4.0"
+versions.multiDex = "2.0.1"
+versions.room = "2.2.5"
+versions.guava = "30.0-jre"
+versions.navigationFragmentKtx = "2.3.1"
+versions.mockito = "1.10.19"
+
+def dep = [:]
+dep.gradle = "com.android.tools.build:gradle:$versions.gradle"
+
+def android = [:]
+android.appCompat = "androidx.appcompat:appcompat:$versions.appCompat"
+android.constraintLayout = "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+android.lagacySupportV4 = "androidx.legacy:legacy-support-v4:$versions.lagacySupportV4"
+android.dagger = "com.google.dagger:dagger:$versions.dagger"
+android.daggerCompiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+android.daggerAndroid = "com.google.dagger:dagger-android:$versions.dagger"
+android.daggerAndroidSupport = "com.google.dagger:dagger-android-support:$versions.dagger"
+android.daggerAndroidProcessor = "com.google.dagger:dagger-android-processor:$versions.dagger"
+android.glide = "com.github.bumptech.glide:glide:$versions.glide"
+android.glideCompiler = "com.github.bumptech.glide:compiler:$versions.glide"
+android.lifeCycleViewModel = "androidx.lifecycle:lifecycle-viewmodel:$versions.lifeCycleViewModel"
+android.lifeCycleViewModelRxStream = "androidx.lifecycle:lifecycle-reactivestreams:$versions.lifeCycleViewModel"
+android.lifeCycleViewModelExt = "androidx.lifecycle:lifecycle-extensions:$versions.lifeCycleViewModel"
+android.retrofit = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+android.retrofitConverterGson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+android.retrofitAdapterRxJava2 = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+android.httpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$versions.httpLoggingInterceptor"
+android.circleImageView = "de.hdodenhof:circleimageview:$versions.circleImageView"
+android.recyclerView = "androidx.recyclerview:recyclerview:$versions.recyclerView"
+android.cardview = "androidx.cardview:cardview:$versions.cardview"
+android.material = "com.google.android.material:material:$versions.material"
+android.shimmer = "com.facebook.shimmer:shimmer:$versions.shimmer"
+android.multiDex = "androidx.multidex:multidex:$versions.multiDex"
+android.roomRuntime = "androidx.room:room-runtime:$versions.room"
+android.roomRxJava = "androidx.room:room-rxjava2:$versions.room"
+android.roomCompiler = "androidx.room:room-compiler:$versions.room"
+android.guava = "com.google.guava:guava:$versions.guava"
+android.navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragmentKtx"
+
+def test = [:]
+test.jUnit = "junit:junit:$versions.jUnit"
+test.extJUnit = "androidx.test.ext:junit:$versions.extJUnit"
+test.espressoCore = "androidx.test.espresso:espresso-core:$versions.espressoCore"
+test.mockito = "org.mockito:mockito-core:$versions.mockito"
+
+def rx = [:]
+rx.rxJava = "io.reactivex.rxjava2:rxjava:$versions.rxJava"
+rx.rxJavaRxAndroid = "io.reactivex.rxjava2:rxandroid:$versions.rxJavaRxAndroid"
+
+def firebase = [:]
+firebase.googleServices = "com.google.gms:google-services:$versions.googleServices"
+firebase.crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:$versions.crashlyticsGradle"
+firebase.firebaseAnalytics = "com.google.firebase:firebase-analytics:$versions.firebaseAnalytics"
+firebase.firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:$versions.firebaseCrashlytics"
+
+def buildVersions = [:]
+buildVersions.compileSdkVersion = 30
+buildVersions.minSdkVersion = 23
+buildVersions.targetSdkVersion = 30
+buildVersions.versionCode = 5
+buildVersions.versionName = "1.0.3+1"
+
+def addRepositories(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dep.android = android
+dep.test = test
+dep.rx = rx
+dep.firebase = firebase
+
+ext.dep = dep
+ext.buildVersions = buildVersions
+ext.addRepositories = this.&addRepositories
