@@ -9,9 +9,10 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30"
         classpath dep.firebase.googleServices
         classpath dep.firebase.crashlyticsGradle
-
+        classpath dep.android.hiltGradle
     }
 }
 
@@ -25,4 +26,12 @@ task clean(type: Delete) {
 
 task unitTestDomain(dependsOn: [':domain:test']){
     description 'Run all unit test at once'
+}
+
+task unitTestData(dependsOn: [':data:test']){
+    description 'Run all unit test at once'
+}
+
+task instrumentationTestData(dependsOn: [':data:connectedAndroidTest']){
+    description 'Run all instrumentation test on data'
 }

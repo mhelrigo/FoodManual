@@ -1,5 +1,7 @@
 package mhelrigo.foodmanual.domain.repository;
 
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import mhelrigo.foodmanual.domain.model.meal.Meal;
@@ -12,5 +14,5 @@ public interface MealRepository {
     Single<Meals> searchByCategory(String category);
     Completable addFavorite(Meal meal);
     Completable removeFavorite(Meal meal);
-    Single<Meals> getAllFavorites();
+    Single<List<Meal>> getAllFavorites();
 }

@@ -1,9 +1,7 @@
 package mhelrigo.foodmanual.domain.usecase.meal;
 
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +15,7 @@ import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchByCategoryTest {
-    public static final String FAKE_CATEGORY = "Some Category";
+    private static final String FAKE_CATEGORY = "Vegetarian";
 
     private SearchByCategory searchByCategory;
 

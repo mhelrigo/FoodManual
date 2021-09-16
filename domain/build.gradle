@@ -1,15 +1,6 @@
 plugins {
     id 'java-library'
-}
-
-configurations {
-    provided
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
+    id 'kotlin-kapt'
 }
 
 java {
@@ -21,4 +12,7 @@ dependencies {
     implementation dep.rx.rxJava
     implementation dep.test.jUnit
     implementation dep.test.mockito
+
+    implementation dep.android.hiltCore
+    annotationProcessor dep.android.hiltCompiler
 }

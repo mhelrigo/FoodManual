@@ -2,7 +2,6 @@ package mhelrigo.foodmanual.domain.usecase.meal;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static mhelrigo.foodmanual.domain.FoodTestModel.FAKE_MEAL_ID;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import mhelrigo.foodmanual.domain.FoodTestModel;
 import mhelrigo.foodmanual.domain.model.meal.Meal;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
@@ -22,6 +20,9 @@ public class AddFavoriteTest {
 
     @Mock
     MealRepository mealRepository;
+
+    @Mock
+    Meal meal;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -33,7 +34,6 @@ public class AddFavoriteTest {
 
     @Test
     public void addFavoriteSuccess() {
-        Meal meal = FoodTestModel.mockMeal(FAKE_MEAL_ID);
         addFavorite.execute(AddFavorite.Params.params(meal));
         verify(mealRepository).addFavorite(meal);
         verifyNoMoreInteractions(mealRepository);

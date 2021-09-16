@@ -1,13 +1,18 @@
 package mhelrigo.foodmanual.domain.usecase.meal;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Completable;
 import mhelrigo.foodmanual.domain.model.meal.Meal;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 import mhelrigo.foodmanual.domain.usecase.base.UseCase;
 
-class AddFavorite extends UseCase<Completable, AddFavorite.Params> {
+@Singleton
+public class AddFavorite extends UseCase<Completable, AddFavorite.Params> {
     private MealRepository mealRepository;
 
+    @Inject
     public AddFavorite(MealRepository mealRepository) {
         this.mealRepository = mealRepository;
     }

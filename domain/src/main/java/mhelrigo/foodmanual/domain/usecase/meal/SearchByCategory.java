@@ -1,13 +1,18 @@
 package mhelrigo.foodmanual.domain.usecase.meal;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Single;
 import mhelrigo.foodmanual.domain.model.meal.Meals;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 import mhelrigo.foodmanual.domain.usecase.base.UseCase;
 
+@Singleton
 public class SearchByCategory extends UseCase<Single<Meals>, SearchByCategory.Params> {
     private MealRepository mealRepository;
 
+    @Inject
     public SearchByCategory(MealRepository mealRepository) {
         this.mealRepository = mealRepository;
     }

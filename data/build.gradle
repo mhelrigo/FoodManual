@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+def foodManualPropertiesFile = rootProject.file("foodmanual.properties")
+def foodManualProperties = new Properties()
+foodManualProperties.load(new FileInputStream(foodManualPropertiesFile))
+
+android {
+    compileSdk buildVersions.compileSdkVersion
+
+    defaultConfig {
+        minSdk buildVersions.minSdkVersion
+        targetSdk buildVersions.targetSdkVersion
+        versionCode buildVersions.versionCode
+        versionName buildVersions.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField("String", "API_KEY", foodManualProperties['API_KEY'])
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation project(path: ':domain')
+
+    implementation dep.android.hilt
+    annotationProcessor dep.android.hiltCompiler
+    implementation dep.android.hiltCore
+
+    implementation dep.android.retrofit
+    implementation dep.android.retrofitConverterGson
+    implementation dep.android.retrofitAdapterRxJava2
+    implementation dep.rx.rxJava
+    implementation dep.rx.rxJavaRxAndroid
+
+    implementation dep.android.roomRuntime
+    implementation dep.android.roomRxJava
+    annotationProcessor dep.android.roomCompiler
+
+    testImplementation dep.test.jUnit
+    androidTestImplementation dep.test.extJUnit
+    androidTestImplementation dep.test.espressoCore
+    implementation dep.test.mockito
+}

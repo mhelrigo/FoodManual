@@ -16,7 +16,7 @@ public class GetRandomlyTest {
     private GetRandomly getRandomly;
 
     @Mock
-    public MealRepository mealRepository;
+    MealRepository mealRepository;
 
     @Before
     public void setUp() {
