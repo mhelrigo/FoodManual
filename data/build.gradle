@@ -56,4 +56,5 @@ dependencies {
     androidTestImplementation dep.test.extJUnit
     androidTestImplementation dep.test.espressoCore
     implementation dep.test.mockito
+    testImplementation dep.test.mockWebServer
 }

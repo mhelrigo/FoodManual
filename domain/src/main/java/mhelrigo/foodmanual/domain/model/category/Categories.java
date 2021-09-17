@@ -3,17 +3,17 @@ package mhelrigo.foodmanual.domain.model.category;
 import java.util.List;
 
 public class Categories {
-    private List<Category> categories;
+    private List<Category> meals;
 
-    public Categories(List<Category> categories) {
-        this.categories = categories;
+    public Categories(List<Category> meals) {
+        this.meals = meals;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public List<Category> getMeals() {
+        return meals;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setMeals(List<Category> meals) {
+        this.meals = meals;
     }
 }
