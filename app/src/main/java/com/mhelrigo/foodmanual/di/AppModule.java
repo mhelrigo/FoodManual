@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.data.local.AppDatabase;
 import com.mhelrigo.foodmanual.data.remote.RetrofitRetryInterceptor;
 import com.mhelrigo.foodmanual.utils.Constants;
@@ -27,6 +28,8 @@ import javax.net.ssl.X509TrustManager;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
 import dagger.multibindings.IntoMap;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -35,11 +38,17 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
-public abstract class AppModule {
+@InstallIn(SingletonComponent.class)
+public class AppModule {
+    /*@Binds
+    @IntoMap
+    @ViewModelKey(OldMealModel.class)
+    public abstract ViewModel oldMealModel(OldMealModel oldMealModel);
+
     @Binds
     @IntoMap
     @ViewModelKey(MealViewModel.class)
-    public abstract ViewModel mealViewModel(MealViewModel mealViewModel);
+    public abstract ViewModel mealViewModel(MealViewModel oldMealModel);*/
 
     @Singleton
     @Provides
@@ -60,7 +69,7 @@ public abstract class AppModule {
 
     @Singleton
     @Provides
-    static AppDatabase appDatabase(Application application){
+    AppDatabase appDatabase(Application application){
         return Room.databaseBuilder(application, AppDatabase.class, "fm")
                 .fallbackToDestructiveMigration()
                 .build();

@@ -20,7 +20,7 @@ import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 public class LocalModule {
     @Singleton
     @Provides
-    RoomDatabase database(@ApplicationContext Context context) {
+    FoodManualDatabase database(@ApplicationContext Context context) {
         return Room.databaseBuilder(context, FoodManualDatabase.class, FoodManualDatabase.DATABASE_NAME).build();
     }
 

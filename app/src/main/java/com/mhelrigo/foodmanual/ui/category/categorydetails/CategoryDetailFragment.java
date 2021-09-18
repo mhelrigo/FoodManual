@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.data.model.Meal;
 import com.mhelrigo.foodmanual.databinding.FragmentCategoryDetailBinding;
@@ -25,20 +25,20 @@ import com.mhelrigo.foodmanual.ui.home.MealRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.home.MealsType;
 import com.mhelrigo.foodmanual.ui.mealdetails.MealDetailsFragment;
 import com.mhelrigo.foodmanual.utils.Constants;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CategoryDetailFragment extends DaggerFragment {
+@AndroidEntryPoint
+public class CategoryDetailFragment extends Fragment {
     private static final String TAG = "CategoryDetailFragment";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
     @Inject
     FirebaseAnalytics firebaseAnalytics;
@@ -46,12 +46,13 @@ public class CategoryDetailFragment extends DaggerFragment {
     private FragmentCategoryDetailBinding binding;
 
     CategoriesViewModel mCategoriesViewModel;
-    private MealViewModel mMealViewModel;
+    private OldMealModel mOldMealModel;
 
     private MealRecyclerViewAdapter mMealRecyclerViewAdapter;
 
     private boolean isTablet = false;
 
+    @Inject
     public CategoryDetailFragment() {
         // Required empty public constructor
     }
@@ -61,8 +62,8 @@ public class CategoryDetailFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mCategoriesViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(CategoriesViewModel.class);
-        mMealViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
+        mCategoriesViewModel = new ViewModelProvider(this).get(CategoriesViewModel.class);
+        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
 
         if (savedInstanceState != null){
             if (savedInstanceState.containsKey(Constants.PACKAGE_NAME.concat(Constants.CATEGORY))){
@@ -108,12 +109,12 @@ public class CategoryDetailFragment extends DaggerFragment {
 
             @Override
             public void onAddedToFavorites(Meal meal) {
-                mMealViewModel.addToFavorites(meal);
+                mOldMealModel.addToFavorites(meal);
             }
 
             @Override
             public void onRemovedFromFavorites(Meal meal) {
-                mMealViewModel.removeFromFavorites(meal);
+                mOldMealModel.removeFromFavorites(meal);
             }
         });
 

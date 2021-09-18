@@ -17,17 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 @InstallIn(SingletonComponent.class)
-class RemoteModule {
-    @Singleton
-    @Provides
-    Retrofit retrofit() {
-        return new Retrofit.Builder()
-                .baseUrl("https://www.themealdb.com/api/json/v2/" + BuildConfig.API_KEY + "/")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
-
+public class RemoteModule {
     @Singleton
     @Provides
     MealApi mealApi(Retrofit retrofit) {

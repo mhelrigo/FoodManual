@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.mhelrigo.foodmanual.MealViewModel" />
+            type="com.mhelrigo.foodmanual.OldMealModel" />
 
         <variable
             name="adapter"

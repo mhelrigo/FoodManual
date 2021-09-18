@@ -16,12 +16,13 @@ import com.mhelrigo.foodmanual.utils.Constants;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
-@Singleton
+@HiltViewModel
 public class CategoriesViewModel extends BaseViewModel {
     private static final String TAG = "CategoriesViewModel";
 

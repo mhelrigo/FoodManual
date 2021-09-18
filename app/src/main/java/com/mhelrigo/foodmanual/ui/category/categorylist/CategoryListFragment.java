@@ -6,10 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +17,20 @@ import com.mhelrigo.foodmanual.databinding.FragmentCategoryListBinding;
 import com.mhelrigo.foodmanual.ui.category.CategoriesViewModel;
 import com.mhelrigo.foodmanual.ui.category.CategoryRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.category.categorydetails.CategoryDetailFragment;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CategoryListFragment extends DaggerFragment {
+@AndroidEntryPoint
+public class CategoryListFragment extends Fragment {
     private static final String TAG = "CategoryListFragment";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
     private FragmentCategoryListBinding binding;
 
@@ -42,6 +40,7 @@ public class CategoryListFragment extends DaggerFragment {
 
     private boolean isTablet = false;
 
+    @Inject
     public CategoryListFragment() {
         // Required empty public constructor
     }
@@ -51,7 +50,7 @@ public class CategoryListFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mCategoriesViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(CategoriesViewModel.class);
+        /*mCategoriesViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(CategoriesViewModel.class);*/
         mCategoriesViewModel.fetchCategories();
 
         isTablet = getResources().getBoolean(R.bool.isTablet);

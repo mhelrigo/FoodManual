@@ -3,10 +3,9 @@ package com.mhelrigo.foodmanual;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class BaseActivity extends DaggerAppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
 
     @Override

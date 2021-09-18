@@ -28,6 +28,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.Scheduler;
@@ -38,7 +39,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
-@Singleton
+@HiltViewModel
 public class HomeViewModel extends BaseViewModel {
     private static final String TAG = "HomeViewModel";
 

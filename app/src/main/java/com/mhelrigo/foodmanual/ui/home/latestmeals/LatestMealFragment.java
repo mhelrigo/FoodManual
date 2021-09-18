@@ -16,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.data.model.Meal;
 import com.mhelrigo.foodmanual.databinding.FragmentLatestMealBinding;
@@ -25,27 +25,24 @@ import com.mhelrigo.foodmanual.ui.home.MealRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.home.MealsType;
 import com.mhelrigo.foodmanual.ui.home.NavigationDrawer;
 import com.mhelrigo.foodmanual.ui.mealdetails.MealDetailsFragment;
-import com.mhelrigo.foodmanual.utils.Constants;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LatestMealFragment extends DaggerFragment {
+@AndroidEntryPoint
+public class LatestMealFragment extends Fragment {
     private static final String TAG = "LatestMealFragment";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
     private FragmentLatestMealBinding binding;
     private HomeViewModel mHomeViewModel;
-    private MealViewModel mMealViewModel;
+    private OldMealModel mOldMealModel;
     public NavigationDrawer navigationDrawer;
 
     private MealRecyclerViewAdapter mMealRecyclerViewAdapter;
@@ -53,6 +50,7 @@ public class LatestMealFragment extends DaggerFragment {
     private boolean isTablet = false;
     private boolean isLoadingNetworkDataFetch = false;
 
+    @Inject
     public LatestMealFragment() {
         // Required empty public constructor
     }
@@ -62,8 +60,8 @@ public class LatestMealFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mHomeViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(HomeViewModel.class);
-        mMealViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
+        mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
         mHomeViewModel.fetchLatestMeals();
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -86,18 +84,18 @@ public class LatestMealFragment extends DaggerFragment {
                             .commit();
                 }
 
-                mMealViewModel.setSelectedMeal(meal);
+                mOldMealModel.setSelectedMeal(meal);
             }
 
             @Override
             public void onAddedToFavorites(Meal meal) {
-                mMealViewModel.addToFavorites(meal);
+                mOldMealModel.addToFavorites(meal);
             }
 
             @Override
             public void onRemovedFromFavorites(Meal meal) {
                 Log.e(TAG, "onRemovedFromFavorites: " + meal.getStrMeal());
-                mMealViewModel.removeFromFavorites(meal);
+                mOldMealModel.removeFromFavorites(meal);
             }
         });
 
@@ -136,7 +134,7 @@ public class LatestMealFragment extends DaggerFragment {
 
         mHomeViewModel.getMealsData().observe(getViewLifecycleOwner(), meals -> {
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
+                mOldMealModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
             }
             mMealRecyclerViewAdapter.setData(meals.getMealList());
             hideLoading();
@@ -150,7 +148,7 @@ public class LatestMealFragment extends DaggerFragment {
             isLoadingNetworkDataFetch = false;
 
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getRandomMeals(true).getValue().getMealList().get(0));
+                mOldMealModel.setSelectedMeal(mHomeViewModel.getRandomMeals(true).getValue().getMealList().get(0));
             }
 
             mMealRecyclerViewAdapter.setData(meals.getMealList());
@@ -178,7 +176,7 @@ public class LatestMealFragment extends DaggerFragment {
         super.onResume();
         if (mHomeViewModel.getMealsData().getValue() != null) {
             if (isTablet) {
-                mMealViewModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
+                mOldMealModel.setSelectedMeal(mHomeViewModel.getMealsData().getValue().getMealList().get(0));
             }
         }
     }

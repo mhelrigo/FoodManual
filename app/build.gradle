@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'dagger.hilt.android.plugin'
 
 def foodManualPropertiesFile = rootProject.file("foodmanual.properties")
 def foodManualProperties = new Properties()
@@ -37,6 +38,9 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':data')
+    implementation project(path: ':domain')
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation dep.android.appCompat
     implementation dep.android.constraintLayout
@@ -46,11 +50,15 @@ dependencies {
     androidTestImplementation dep.test.espressoCore
 
     //Dagger
-    implementation dep.android.dagger
+    /*implementation dep.android.dagger
     annotationProcessor dep.android.daggerCompiler
     implementation dep.android.daggerAndroid
     implementation dep.android.daggerAndroidSupport
-    annotationProcessor dep.android.daggerAndroidProcessor
+    annotationProcessor dep.android.daggerAndroidProcessor*/
+
+    implementation dep.android.hilt
+    annotationProcessor dep.android.hiltCompiler
+    implementation dep.android.hiltCore
 
     //Glide
     implementation dep.android.glide

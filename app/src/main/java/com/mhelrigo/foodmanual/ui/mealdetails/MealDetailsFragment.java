@@ -14,17 +14,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
-import com.mhelrigo.foodmanual.BaseApplication;
-import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealDetailsBinding;
-import com.mhelrigo.foodmanual.ui.connectionreceiver.ConnectivityReceiver;
 import com.mhelrigo.foodmanual.ui.home.HomeViewModel;
 import com.mhelrigo.foodmanual.utils.Constants;
 import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
@@ -33,21 +30,19 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MealDetailsFragment extends DaggerFragment {
+@AndroidEntryPoint
+public class MealDetailsFragment extends Fragment {
     private static final String TAG = "MealDetailsFragment";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
-    @Inject
-    RequestManager requestManager;
-
-    private MealViewModel mMealViewModel;
+    private OldMealModel mOldMealModel;
     private HomeViewModel mHomeViewModel;
 
     private TagsRecyclerViewAdapter tagsRecyclerViewAdapter;
@@ -58,6 +53,7 @@ public class MealDetailsFragment extends DaggerFragment {
 
     private ObjectAnimator animator;
 
+    @Inject
     public MealDetailsFragment() {
         // Required empty public constructor
     }
@@ -67,19 +63,19 @@ public class MealDetailsFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mMealViewModel
-                = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
-        mHomeViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(HomeViewModel.class);
+        mOldMealModel
+                = new ViewModelProvider(this).get(OldMealModel.class);
+        mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("mealId")) {
-                mMealViewModel.fetchMealById(getArguments().getString("mealId"));
+                mOldMealModel.fetchMealById(getArguments().getString("mealId"));
             }
         }
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(Constants.PACKAGE_NAME.concat(Constants.ID))) {
-                mMealViewModel.fetchMealById(savedInstanceState.getString(Constants.PACKAGE_NAME.concat(Constants.ID)));
+                mOldMealModel.fetchMealById(savedInstanceState.getString(Constants.PACKAGE_NAME.concat(Constants.ID)));
             }
         }
     }
@@ -92,7 +88,7 @@ public class MealDetailsFragment extends DaggerFragment {
 
         tagsRecyclerViewAdapter = new TagsRecyclerViewAdapter();
 
-        binding.setViewModel(mMealViewModel);
+        binding.setViewModel(mOldMealModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setAdapter(tagsRecyclerViewAdapter);
         binding.setView(this);
@@ -106,13 +102,13 @@ public class MealDetailsFragment extends DaggerFragment {
         super.onViewCreated(view, savedInstanceState);
 
         startLoading();
-        mMealViewModel.getSelectedMeal().observe(getViewLifecycleOwner(), meal -> {
+        mOldMealModel.getSelectedMeal().observe(getViewLifecycleOwner(), meal -> {
             if (meal == null) {
                 startLoading();
                 return;
             }
 
-            mMealViewModel.setSelectedMealId(meal.getIdMeal());
+            mOldMealModel.setSelectedMealId(meal.getIdMeal());
 
             if (meal.getStrTags() != null) {
                 tagsRecyclerViewAdapter.setData(Arrays.asList(meal.getStrTags().split(",")));
@@ -128,14 +124,14 @@ public class MealDetailsFragment extends DaggerFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMealViewModel.setSelectedMeal(null);
+        mOldMealModel.setSelectedMeal(null);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mMealViewModel.getSelectedMealId() != null) {
-            outState.putString(Constants.PACKAGE_NAME.concat(Constants.ID), mMealViewModel.getSelectedMealId());
+        if (mOldMealModel.getSelectedMealId() != null) {
+            outState.putString(Constants.PACKAGE_NAME.concat(Constants.ID), mOldMealModel.getSelectedMealId());
         }
     }
 
@@ -169,7 +165,7 @@ public class MealDetailsFragment extends DaggerFragment {
     }
 
     public void favoriteToggle() {
-        if (mMealViewModel.getSelectedMeal().getValue().isFavorite()) {
+        if (mOldMealModel.getSelectedMeal().getValue().isFavorite()) {
             removeFromFavorites();
             return;
         }
@@ -180,15 +176,15 @@ public class MealDetailsFragment extends DaggerFragment {
     public void addToFavorites() {
         binding.imageViewFavorite.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_favorite));
         animateFavoriteIcon(1.5f, 1.5f);
-        mMealViewModel.getSelectedMeal().getValue().setFavorite(true);
-        mMealViewModel.addToFavorites(mMealViewModel.getSelectedMeal().getValue());
+        mOldMealModel.getSelectedMeal().getValue().setFavorite(true);
+        mOldMealModel.addToFavorites(mOldMealModel.getSelectedMeal().getValue());
     }
 
     public void removeFromFavorites() {
         binding.imageViewFavorite.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_favorite_1));
         animateFavoriteIcon(0.5f, 0.5f);
-        mMealViewModel.getSelectedMeal().getValue().setFavorite(false);
-        mMealViewModel.removeFromFavorites(mMealViewModel.getSelectedMeal().getValue());
+        mOldMealModel.getSelectedMeal().getValue().setFavorite(false);
+        mOldMealModel.removeFromFavorites(mOldMealModel.getSelectedMeal().getValue());
     }
 
     public void animateFavoriteIcon(float xVal, float yVal) {

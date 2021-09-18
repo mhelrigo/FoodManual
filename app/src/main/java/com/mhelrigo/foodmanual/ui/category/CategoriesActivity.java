@@ -1,5 +1,6 @@
 package com.mhelrigo.foodmanual.ui.category;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -7,35 +8,34 @@ import android.os.Bundle;
 
 import com.mhelrigo.foodmanual.BaseActivity;
 import com.mhelrigo.foodmanual.BaseApplication;
-import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.ActivityCategoryBinding;
-import com.mhelrigo.foodmanual.ui.category.categorydetails.CategoryDetailFragment;
 import com.mhelrigo.foodmanual.ui.category.categorylist.CategoryListFragment;
 import com.mhelrigo.foodmanual.ui.connectionreceiver.ConnectivityReceiver;
 import com.mhelrigo.foodmanual.ui.mealdetails.MealDetailsFragment;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
-import javax.inject.Inject;
+import dagger.hilt.android.AndroidEntryPoint;
 
-public class CategoriesActivity extends BaseActivity {
+@AndroidEntryPoint
+public class CategoriesActivity extends AppCompatActivity {
     private static final String TAG = "CategoriesActivity";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
     CategoriesViewModel mCategoriesViewModel;
-    MealViewModel mMealViewModel;
+    OldMealModel mOldMealModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCategoryBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_category);
 
-        mCategoriesViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(CategoriesViewModel.class);
+        mCategoriesViewModel = new ViewModelProvider(this).get(CategoriesViewModel.class);
         binding.setViewModel(mCategoriesViewModel);
 
-        mMealViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
+        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
 
         if(savedInstanceState == null) {
             getSupportFragmentManager()
@@ -56,8 +56,8 @@ public class CategoriesActivity extends BaseActivity {
 
             MealDetailsFragment mealDetailsFragment = (MealDetailsFragment) getSupportFragmentManager().findFragmentByTag(MealDetailsFragment.class.getSimpleName());
             if (mealDetailsFragment != null && mealDetailsFragment.isVisible()){
-                mMealViewModel.setIsNetworkConnected(isConnected);
-                mMealViewModel.onRetryNetworkRequests();
+                mOldMealModel.setIsNetworkConnected(isConnected);
+                mOldMealModel.onRetryNetworkRequests();
             }
         });
     }

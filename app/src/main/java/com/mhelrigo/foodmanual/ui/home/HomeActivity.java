@@ -1,8 +1,8 @@
 package com.mhelrigo.foodmanual.ui.home;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mhelrigo.foodmanual.BaseActivity;
 import com.mhelrigo.foodmanual.BaseApplication;
 import com.mhelrigo.foodmanual.MealViewModel;
+import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.ActivityHomeBinding;
 import com.mhelrigo.foodmanual.databinding.NavigationMenuBinding;
@@ -26,14 +27,18 @@ import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
 
-public class HomeActivity extends BaseActivity implements NavigationDrawer {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class HomeActivity extends AppCompatActivity implements NavigationDrawer {
     private static final String TAG = "HomeActivity";
 
-    @Inject
-    ViewModelProviderFactory viewModelProviderFactory;
+    /*@Inject
+    ViewModelProviderFactory viewModelProviderFactory;*/
 
     private HomeViewModel mHomeViewModel;
-    private MealViewModel mMealViewModel;
+    private OldMealModel mOldMealModel;
+    private MealViewModel mealViewModel;
 
     ActivityHomeBinding binding;
 
@@ -48,13 +53,14 @@ public class HomeActivity extends BaseActivity implements NavigationDrawer {
 
         FirebaseAnalytics.getInstance(this);
 
-        mHomeViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(HomeViewModel.class);
+        mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding.setView(this);
         binding.setViewModel(mHomeViewModel);
         binding.navigationView.addHeaderView(navBinding.getRoot());
         navBinding.setView(this);
 
-        mMealViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(MealViewModel.class);
+        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
+        mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -82,8 +88,8 @@ public class HomeActivity extends BaseActivity implements NavigationDrawer {
 
             MealDetailsFragment mealDetailsFragment = (MealDetailsFragment) getSupportFragmentManager().findFragmentByTag(MealDetailsFragment.class.getSimpleName());
             if (mealDetailsFragment != null && mealDetailsFragment.isVisible()) {
-                mMealViewModel.setIsNetworkConnected(isConnected);
-                mMealViewModel.onRetryNetworkRequests();
+                mOldMealModel.setIsNetworkConnected(isConnected);
+                mOldMealModel.onRetryNetworkRequests();
             }
         });
     }
@@ -130,6 +136,6 @@ public class HomeActivity extends BaseActivity implements NavigationDrawer {
 
     private void resetRandomMeals() {
         mHomeViewModel.setRandomMeals(null);
-        mMealViewModel.setSelectedMeal(null);
+        mOldMealModel.setSelectedMeal(null);
     }
 }
