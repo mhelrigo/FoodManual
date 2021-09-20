@@ -23,18 +23,12 @@ import com.mhelrigo.foodmanual.ui.home.favoritemeals.FavoriteMealFragment;
 import com.mhelrigo.foodmanual.ui.home.latestmeals.LatestMealFragment;
 import com.mhelrigo.foodmanual.ui.home.randommeals.RandomMealsFragment;
 import com.mhelrigo.foodmanual.ui.mealdetails.MealDetailsFragment;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
-
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity implements NavigationDrawer {
     private static final String TAG = "HomeActivity";
-
-    /*@Inject
-    ViewModelProviderFactory viewModelProviderFactory;*/
 
     private HomeViewModel mHomeViewModel;
     private OldMealModel mOldMealModel;

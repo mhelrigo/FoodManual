@@ -32,10 +32,6 @@
         <activity android:name=".ui.home.HomeActivity" android:configChanges="orientation"/>
         <activity android:name=".ui.MainActivity" android:configChanges="orientation"/>
 
-        <!--<service android:name=".di.network.NetworkSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>-->
-
         <receiver android:name=".ui.connectionreceiver.ConnectivityReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>

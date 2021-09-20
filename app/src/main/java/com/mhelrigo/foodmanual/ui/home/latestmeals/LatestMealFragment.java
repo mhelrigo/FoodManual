@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 
 import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.data.model.Meal;
+import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.databinding.FragmentLatestMealBinding;
 import com.mhelrigo.foodmanual.ui.home.HomeViewModel;
 import com.mhelrigo.foodmanual.ui.home.MealRecyclerViewAdapter;
@@ -60,8 +60,8 @@ public class LatestMealFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
+        mHomeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
+        mOldMealModel = new ViewModelProvider(getActivity()).get(OldMealModel.class);
         mHomeViewModel.fetchLatestMeals();
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -76,7 +76,7 @@ public class LatestMealFragment extends Fragment {
 
         mMealRecyclerViewAdapter = new MealRecyclerViewAdapter(MealsType.LATEST, new MealRecyclerViewAdapter.OnMealClicked() {
             @Override
-            public void onClicked(Meal meal) {
+            public void onClicked(MealModel mealModel) {
                 if (!isTablet) {
                     getFragmentManager().beginTransaction()
                             .add(R.id.fragmentHome, new MealDetailsFragment(), MealDetailsFragment.class.getSimpleName())
@@ -84,18 +84,18 @@ public class LatestMealFragment extends Fragment {
                             .commit();
                 }
 
-                mOldMealModel.setSelectedMeal(meal);
+                mOldMealModel.setSelectedMeal(mealModel);
             }
 
             @Override
-            public void onAddedToFavorites(Meal meal) {
-                mOldMealModel.addToFavorites(meal);
+            public void onAddedToFavorites(MealModel mealModel) {
+                mOldMealModel.addToFavorites(mealModel);
             }
 
             @Override
-            public void onRemovedFromFavorites(Meal meal) {
-                Log.e(TAG, "onRemovedFromFavorites: " + meal.getStrMeal());
-                mOldMealModel.removeFromFavorites(meal);
+            public void onRemovedFromFavorites(MealModel mealModel) {
+                Log.e(TAG, "onRemovedFromFavorites: " + mealModel.getStrMeal());
+                mOldMealModel.removeFromFavorites(mealModel);
             }
         });
 

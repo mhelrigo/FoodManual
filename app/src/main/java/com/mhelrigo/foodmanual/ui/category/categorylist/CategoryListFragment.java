@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -29,9 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class CategoryListFragment extends Fragment {
     private static final String TAG = "CategoryListFragment";
 
-    /*@Inject
-    ViewModelProviderFactory viewModelProviderFactory;*/
-
     private FragmentCategoryListBinding binding;
 
     CategoriesViewModel mCategoriesViewModel;
@@ -50,7 +48,7 @@ public class CategoryListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        /*mCategoriesViewModel = new ViewModelProvider(this, viewModelProviderFactory).get(CategoriesViewModel.class);*/
+        mCategoriesViewModel = new ViewModelProvider(getActivity()).get(CategoriesViewModel.class);
         mCategoriesViewModel.fetchCategories();
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
@@ -69,12 +67,12 @@ public class CategoryListFragment extends Fragment {
         categoryRecyclerViewAdapter = new CategoryRecyclerViewAdapter(category -> {
             mCategoriesViewModel.setSelectedCategory(category);
 
-            if (!isTablet){
+            if (!isTablet) {
                 getFragmentManager().beginTransaction()
                         .add(R.id.fragmentCategory, categoryDetailFragment)
                         .addToBackStack(CategoryDetailFragment.class.getSimpleName())
                         .commit();
-            }else {
+            } else {
                 getFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragmentCategoryDetails, new CategoryDetailFragment(), CategoryDetailFragment.class.getSimpleName())
@@ -95,23 +93,23 @@ public class CategoryListFragment extends Fragment {
         binding.shimmerFrameLayoutCategories.startShimmer();
         binding.shimmerFrameLayoutCategories.setVisibility(View.VISIBLE);
         mCategoriesViewModel.getCategories().observe(getViewLifecycleOwner(), categories -> {
-            if (isTablet){
-                mCategoriesViewModel.setSelectedCategory(mCategoriesViewModel.getCategories().getValue().getCategories().get(0));
+            if (isTablet) {
+                mCategoriesViewModel.setSelectedCategory(mCategoriesViewModel.getCategories().getValue().get(0));
                 getFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragmentCategoryDetails, new CategoryDetailFragment(), CategoryDetailFragment.class.getSimpleName())
                         .commit();
             }
-            categoryRecyclerViewAdapter.setData(categories.getCategories());
+            categoryRecyclerViewAdapter.setData(categories);
             binding.shimmerFrameLayoutCategories.stopShimmer();
             binding.shimmerFrameLayoutCategories.setVisibility(View.GONE);
         });
     }
 
-    public void goBack(){
-        if (isTablet){
+    public void goBack() {
+        if (isTablet) {
             getActivity().finish();
-        }else {
+        } else {
             getActivity().onBackPressed();
         }
     }

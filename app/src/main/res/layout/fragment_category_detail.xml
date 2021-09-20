@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        tools:context=".ui.category.categorydetails.CategoryDetailFragment"
+        tools:context=".ui.categoryEntity.categorydetails.CategoryDetailFragment"
         android:background="?android:attr/windowBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout

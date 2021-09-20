@@ -1,43 +1,37 @@
 package com.mhelrigo.foodmanual.ui.category;
 
-import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.data.model.Category;
+import com.mhelrigo.foodmanual.model.category.CategoryModel;
 import com.mhelrigo.foodmanual.databinding.ItemCategoryBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "CategoryRecyclerViewAda";
 
     public interface OnCategoryClicked{
-        void onClick(Category category);
+        void onClick(CategoryModel categoryModel);
     }
 
-    private List<Category> categoryList = new ArrayList<>();
+    private List<CategoryModel> categoryModelList = new ArrayList<>();
     private OnCategoryClicked onCategoryClicked;
 
     public CategoryRecyclerViewAdapter(OnCategoryClicked onCategoryClicked) {
         this.onCategoryClicked = onCategoryClicked;
     }
 
-    public void setData(List<Category> categoryList){
-        this.categoryList = categoryList;
+    public void setData(List<CategoryModel> categoryModelList){
+        Log.e("setData", "setData : " + categoryModelList.size());
+        this.categoryModelList = categoryModelList;
         notifyDataSetChanged();
     }
 
@@ -52,17 +46,17 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
 
     @Override
     public void onBindViewHolder(@NonNull CategoryRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.bind(categoryList.get(position));
+        holder.bind(categoryModelList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return (categoryList.size() == 0) ? 0 : categoryList.size();
+        return (categoryModelList.size() == 0) ? 0 : categoryModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemCategoryBinding itemCategoryBinding;
-        Category category;
+        CategoryModel categoryModel;
 
         public ViewHolder(@NonNull ItemCategoryBinding itemCategoryBinding) {
             super(itemCategoryBinding.getRoot());
@@ -70,14 +64,14 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
 
             itemCategoryBinding.getRoot().setOnClickListener(v -> {
                 if(getAdapterPosition() > -1){
-                    onCategoryClicked.onClick(category);
+                    onCategoryClicked.onClick(categoryModel);
                 }
             });
         }
 
-        public void bind(Category category){
-            this.category = category;
-            itemCategoryBinding.setCategory(category);
+        public void bind(CategoryModel categoryModel){
+            this.categoryModel = categoryModel;
+            itemCategoryBinding.setCategoryModel(categoryModel);
             itemCategoryBinding.executePendingBindings();
         }
     }

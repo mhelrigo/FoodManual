@@ -47,6 +47,7 @@ dependencies {
     implementation dep.android.retrofitAdapterRxJava2
     implementation dep.rx.rxJava
     implementation dep.rx.rxJavaRxAndroid
+    implementation dep.android.httpLoggingInterceptor
 
     implementation dep.android.roomRuntime
     implementation dep.android.roomRxJava

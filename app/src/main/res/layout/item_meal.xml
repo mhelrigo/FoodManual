@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-            name="meal"
-            type="com.mhelrigo.foodmanual.data.model.Meal" />
+            name="mealModel"
+            type="com.mhelrigo.foodmanual.model.meal.MealModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -26,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{meal.strMealThumb}"
+                app:imageUrl="@{mealModel.strMealThumb}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +50,7 @@
                 android:ellipsize="marquee"
                 android:fontFamily="@font/gadugi"
                 android:maxLines="2"
-                android:text="@{meal.strMeal}"
+                android:text="@{mealModel.strMeal}"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -67,7 +66,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageView21"
-                app:src="@{meal.favorite ?@drawable/ic_favorite :@drawable/ic_favorite_1 }" />
+                app:src="@{mealModel.favorite ?@drawable/ic_favorite :@drawable/ic_favorite_1 }" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

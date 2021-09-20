@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.data.model.Meal;
+import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.databinding.FragmentCategoryDetailBinding;
 import com.mhelrigo.foodmanual.ui.category.CategoriesViewModel;
 import com.mhelrigo.foodmanual.ui.home.MealRecyclerViewAdapter;
@@ -36,9 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class CategoryDetailFragment extends Fragment {
     private static final String TAG = "CategoryDetailFragment";
-
-    /*@Inject
-    ViewModelProviderFactory viewModelProviderFactory;*/
 
     @Inject
     FirebaseAnalytics firebaseAnalytics;
@@ -62,11 +59,11 @@ public class CategoryDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        mCategoriesViewModel = new ViewModelProvider(this).get(CategoriesViewModel.class);
-        mOldMealModel = new ViewModelProvider(this).get(OldMealModel.class);
+        mCategoriesViewModel = new ViewModelProvider(getActivity()).get(CategoriesViewModel.class);
+        mOldMealModel = new ViewModelProvider(getActivity()).get(OldMealModel.class);
 
-        if (savedInstanceState != null){
-            if (savedInstanceState.containsKey(Constants.PACKAGE_NAME.concat(Constants.CATEGORY))){
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(Constants.PACKAGE_NAME.concat(Constants.CATEGORY))) {
                 mCategoriesViewModel.setSelectedCategory(savedInstanceState.getParcelable(Constants.PACKAGE_NAME.concat(Constants.CATEGORY)));
             }
         }
@@ -88,19 +85,19 @@ public class CategoryDetailFragment extends Fragment {
 
         mMealRecyclerViewAdapter = new MealRecyclerViewAdapter(MealsType.LATEST, new MealRecyclerViewAdapter.OnMealClicked() {
             @Override
-            public void onClicked(Meal meal) {
+            public void onClicked(MealModel mealModel) {
                 Bundle bundle = new Bundle();
-                bundle.putString("mealId", meal.getIdMeal());
+                bundle.putString("mealId", mealModel.getIdMeal());
 
                 MealDetailsFragment mealDetailsFragment = new MealDetailsFragment();
                 mealDetailsFragment.setArguments(bundle);
 
-                if (isTablet){
+                if (isTablet) {
                     getFragmentManager().beginTransaction()
                             .add(R.id.fragmentCategoryDetails, mealDetailsFragment, MealDetailsFragment.class.getSimpleName())
                             .addToBackStack(mealDetailsFragment.getClass().getSimpleName())
                             .commit();
-                }else{
+                } else {
                     getFragmentManager().beginTransaction()
                             .replace(R.id.fragmentCategory, mealDetailsFragment, MealDetailsFragment.class.getSimpleName())
                             .commit();
@@ -108,13 +105,13 @@ public class CategoryDetailFragment extends Fragment {
             }
 
             @Override
-            public void onAddedToFavorites(Meal meal) {
-                mOldMealModel.addToFavorites(meal);
+            public void onAddedToFavorites(MealModel mealModel) {
+                mOldMealModel.addToFavorites(mealModel);
             }
 
             @Override
-            public void onRemovedFromFavorites(Meal meal) {
-                mOldMealModel.removeFromFavorites(meal);
+            public void onRemovedFromFavorites(MealModel mealModel) {
+                mOldMealModel.removeFromFavorites(mealModel);
             }
         });
 
@@ -134,10 +131,10 @@ public class CategoryDetailFragment extends Fragment {
         binding.shimmerFrameLayoutMealsByCategory.startShimmer();
         binding.shimmerFrameLayoutMealsByCategory.setVisibility(View.VISIBLE);
         mCategoriesViewModel.getMealsByCategory().observe(getViewLifecycleOwner(), meals -> {
-            if(meals == null){
+            if (meals == null) {
                 return;
             }
-            mMealRecyclerViewAdapter.setData(meals.getMealList());
+            mMealRecyclerViewAdapter.setData(meals);
             binding.shimmerFrameLayoutMealsByCategory.setVisibility(View.GONE);
             binding.shimmerFrameLayoutMealsByCategory.stopShimmer();
         });
@@ -146,7 +143,7 @@ public class CategoryDetailFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!isTablet){
+        if (!isTablet) {
             mCategoriesViewModel.reset();
         }
     }
@@ -154,7 +151,7 @@ public class CategoryDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mCategoriesViewModel.getSelectedCategory() != null){
+        if (mCategoriesViewModel.getSelectedCategory() != null) {
             outState.putParcelable(Constants.PACKAGE_NAME.concat(Constants.CATEGORY), mCategoriesViewModel.getSelectedCategory().getValue());
         }
     }

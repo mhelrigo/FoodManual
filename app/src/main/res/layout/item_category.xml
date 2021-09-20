@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="category"
-            type="com.mhelrigo.foodmanual.data.model.Category" />
+            name="categoryModel"
+            type="com.mhelrigo.foodmanual.model.category.CategoryModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -25,7 +25,7 @@
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginStart="32dp"
-                app:categoryImage="@{category.strCategoryThumb}"
+                app:categoryImage="@{categoryModel.strCategoryThumb}"
                 app:civ_border_color="@color/colorPrimary"
                 app:civ_border_width="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/gadugi"
-                android:text="@{category.strCategory}"
+                android:text="@{categoryModel.strCategory}"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageView25"

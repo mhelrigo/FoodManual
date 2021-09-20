@@ -7,19 +7,23 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mhelrigo.foodmanual.BaseViewModel;
-import com.mhelrigo.foodmanual.data.DataRepository;
-import com.mhelrigo.foodmanual.data.model.Category;
-import com.mhelrigo.foodmanual.data.model.api.Categories;
-import com.mhelrigo.foodmanual.data.model.api.Meals;
+import com.mhelrigo.foodmanual.mapper.CategoryModelMapper;
+import com.mhelrigo.foodmanual.mapper.MealModelMapper;
+import com.mhelrigo.foodmanual.model.category.CategoryModel;
+import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.utils.Constants;
 
+import java.util.List;
+
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import mhelrigo.foodmanual.domain.usecase.category.GetAllCategory;
+import mhelrigo.foodmanual.domain.usecase.meal.SearchMealByCategory;
 import retrofit2.HttpException;
 
 @HiltViewModel
@@ -29,22 +33,32 @@ public class CategoriesViewModel extends BaseViewModel {
     @Inject
     FirebaseAnalytics firebaseAnalytics;
 
-    private DataRepository mDataRepository;
+    private GetAllCategory getAllCategory;
+    private SearchMealByCategory searchMealByCategory;
+    private CategoryModelMapper categoryModelMapper;
+    private MealModelMapper mealModelMapper;
     private CompositeDisposable mCompositeDisposable;
 
-    private MutableLiveData<Categories> mCategoriesMutableLiveData;
-    private MutableLiveData<Category> mCategoryMutableLiveData;
-    private MutableLiveData<Meals> mMealsMutableLiveData;
+    private MutableLiveData<List<CategoryModel>> mCategoriesMutableLiveData;
+    private MutableLiveData<CategoryModel> mCategoryMutableLiveData;
+    private MutableLiveData<List<MealModel>> mMealsMutableLiveData;
 
     private static final int CATEGORY_REQUEST = 1;
     private static final int CATEGORY_MEALS_REQUEST = 2;
-    public static final int  BOTH_REQUEST = 3;
+    public static final int BOTH_REQUEST = 3;
 
     private int requestRetryType = -1;
 
     @Inject
-    public CategoriesViewModel(DataRepository dataRepository) {
-        this.mDataRepository = dataRepository;
+    public CategoriesViewModel(GetAllCategory getAllCategory,
+                               SearchMealByCategory searchMealByCategory,
+                               CategoryModelMapper categoryModelMapper,
+                               MealModelMapper mealModelMapper) {
+        this.getAllCategory = getAllCategory;
+        this.searchMealByCategory = searchMealByCategory;
+        this.categoryModelMapper = categoryModelMapper;
+        this.mealModelMapper = mealModelMapper;
+
         mCategoriesMutableLiveData = new MutableLiveData<>();
         mCategoryMutableLiveData = new MutableLiveData<>();
         mMealsMutableLiveData = new MutableLiveData<>();
@@ -56,8 +70,8 @@ public class CategoriesViewModel extends BaseViewModel {
         mCompositeDisposable.clear();
     }
 
-    private void retryRequestManager(int requestRetryType){
-        if (requestRetryType > -1){
+    private void retryRequestManager(int requestRetryType) {
+        if (requestRetryType > -1) {
             requestRetryType = BOTH_REQUEST;
         }
 
@@ -66,13 +80,14 @@ public class CategoriesViewModel extends BaseViewModel {
 
     public void fetchCategories() {
         Log.e(TAG, "fetchCategories...");
-        mCompositeDisposable.add(mDataRepository
-                .fetchCategories()
+        mCompositeDisposable.add(getAllCategory.execute(null)
+                .flatMapObservable(categories -> categoryModelMapper.transform(categories.getCategories()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(categories -> {
-                    mCategoriesMutableLiveData.setValue(categories);
+                    mCategoriesMutableLiveData.postValue(categories);
                 }, throwable -> {
+                    Log.e("throwable", throwable.getMessage());
                     if (throwable instanceof HttpException) {
                         isRetryNetworkRequest = true;
                         retryRequestManager(CATEGORY_REQUEST);
@@ -80,27 +95,29 @@ public class CategoriesViewModel extends BaseViewModel {
                 }));
     }
 
-    public LiveData<Categories> getCategories() {
+    public LiveData<List<CategoryModel>> getCategories() {
         return mCategoriesMutableLiveData;
     }
 
-    public void setSelectedCategory(Category category) {
-        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_CATEGORY + category.getStrCategory().replaceAll("\\s", "_"), null);
-        mCategoryMutableLiveData.setValue(category);
+    public void setSelectedCategory(CategoryModel categoryModel) {
+        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_CATEGORY + categoryModel.getStrCategory().replaceAll("\\s", "_"), null);
+        mCategoryMutableLiveData.postValue(categoryModel);
     }
 
-    public LiveData<Category> getSelectedCategory() {
+    public LiveData<CategoryModel> getSelectedCategory() {
         return mCategoryMutableLiveData;
     }
 
     public void fetchMealsByCategory() {
         Log.e(TAG, "fetchMealsByCategory...");
-        mCompositeDisposable.add(mDataRepository
-                .fetchMealsFilteredByCategory(mCategoryMutableLiveData.getValue().getStrCategory())
+        mCompositeDisposable.add(searchMealByCategory.execute(SearchMealByCategory.Params.params(mCategoryMutableLiveData.getValue().getStrCategory()))
+                .flatMapObservable(meals -> Observable.fromIterable(meals.getMeals()))
+                .map(meal -> mealModelMapper.transform(meal))
+                .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(meals -> {
-                    mMealsMutableLiveData.setValue(meals);
+                    mMealsMutableLiveData.postValue(meals);
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         isRetryNetworkRequest = true;
@@ -109,7 +126,7 @@ public class CategoriesViewModel extends BaseViewModel {
                 }));
     }
 
-    public LiveData<Meals> getMealsByCategory() {
+    public LiveData<List<MealModel>> getMealsByCategory() {
         return mMealsMutableLiveData;
     }
 
@@ -121,7 +138,7 @@ public class CategoriesViewModel extends BaseViewModel {
                 fetchCategories();
             } else if (requestRetryType == CATEGORY_MEALS_REQUEST) {
                 fetchMealsByCategory();
-            } else if (requestRetryType == BOTH_REQUEST){
+            } else if (requestRetryType == BOTH_REQUEST) {
                 fetchCategories();
                 fetchMealsByCategory();
             }

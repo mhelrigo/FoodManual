@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import io.reactivex.Single;
 import mhelrigo.foodmanual.data.repository.category.remote.CategoryApi;
-import mhelrigo.foodmanual.domain.model.category.Categories;
+import mhelrigo.foodmanual.domain.entity.category.CategoriesEntity;
 import mhelrigo.foodmanual.domain.repository.CategoryRepository;
 
 @Singleton
@@ -18,7 +18,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public Single<Categories> getAll() {
+    public Single<CategoriesEntity> getAll() {
         return categoryApi.getAll();
     }
 }

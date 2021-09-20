@@ -1,32 +1,29 @@
 package com.mhelrigo.foodmanual;
 
 import android.util.Log;
-import android.view.View;
 
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.mhelrigo.foodmanual.data.DataRepository;
-import com.mhelrigo.foodmanual.data.model.Meal;
-import com.mhelrigo.foodmanual.data.model.api.Meals;
+import com.mhelrigo.foodmanual.mapper.MealModelMapper;
+import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import mhelrigo.foodmanual.domain.usecase.meal.AddFavoriteMeal;
+import mhelrigo.foodmanual.domain.usecase.meal.GetAllFavoriteMeal;
+import mhelrigo.foodmanual.domain.usecase.meal.GetMealDetails;
+import mhelrigo.foodmanual.domain.usecase.meal.RemoveFavoriteMeal;
 import retrofit2.HttpException;
 
 @HiltViewModel
@@ -36,55 +33,68 @@ public class OldMealModel extends BaseViewModel {
     @Inject
     FirebaseAnalytics firebaseAnalytics;
 
-    private DataRepository mDataRepository;
     private CompositeDisposable mCompositeDisposable;
+    private GetAllFavoriteMeal getAllFavoriteMeal;
+    private AddFavoriteMeal addFavoriteMeal;
+    private RemoveFavoriteMeal removeFavoriteMeal;
+    private GetMealDetails getMealDetails;
+    private MealModelMapper mealModelMapper;
 
-    private MutableLiveData<Meal> mMealMutableLiveData;
-    private MutableLiveData<List<Meal>> mFavoriteMutableLiveData;
+    private MutableLiveData<MealModel> mMealMutableLiveData;
+    private MutableLiveData<List<MealModel>> mFavoriteMutableLiveData;
 
     private ObservableBoolean isNoFavorites = new ObservableBoolean(true);
 
     private String selectedMealId;
 
     @Inject
-    public OldMealModel(DataRepository mDataRepository) {
-        this.mDataRepository = mDataRepository;
+    public OldMealModel(GetAllFavoriteMeal getAllFavoriteMeal,
+                        AddFavoriteMeal addFavoriteMeal,
+                        RemoveFavoriteMeal removeFavoriteMeal,
+                        GetMealDetails getMealDetails,
+                        MealModelMapper mealModelMapper) {
         mCompositeDisposable = new CompositeDisposable();
         mMealMutableLiveData = new MutableLiveData<>();
         mFavoriteMutableLiveData = new MutableLiveData<>();
+
+        this.getAllFavoriteMeal = getAllFavoriteMeal;
+        this.addFavoriteMeal = addFavoriteMeal;
+        this.removeFavoriteMeal = removeFavoriteMeal;
+        this.getMealDetails = getMealDetails;
+        this.mealModelMapper = mealModelMapper;
 
         fetchFavorites();
     }
 
     public void fetchMealById(String id) {
-        Log.e(TAG, "fetchMealById");
         selectedMealId = id;
-        mCompositeDisposable.add(mDataRepository.fetchMealById(id)
+        mCompositeDisposable.add(getMealDetails.execute(GetMealDetails.Params.params(id))
+                .flatMapObservable(meals -> Observable.fromIterable(meals.getMeals()))
+                .map(meal -> mealModelMapper.transform(meal))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(meals -> {
-                    mMealMutableLiveData.postValue(meals.getMealList().get(0));
+                .subscribe(meal -> {
+                    mMealMutableLiveData.postValue(meal);
                 }, throwable -> {
-                    Log.e(TAG, "throwable : " + throwable.getMessage());
                     if (throwable instanceof HttpException) {
                         isRetryNetworkRequest = true;
                     }
                 }));
     }
 
-    public void setSelectedMeal(Meal meal) {
-        if (mFavoriteMutableLiveData.getValue().contains(meal)) {
+    public void setSelectedMeal(MealModel mealModel) {
+        if (mFavoriteMutableLiveData.getValue().contains(mealModel)) {
 
         }
 
-        if (meal != null) {
-            firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL + meal.getStrMeal().replaceAll("\\s", "_"), null);
+        if (mealModel != null) {
+            firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL + mealModel.getStrMeal().replaceAll("\\s", "_"), null);
         }
 
-        mMealMutableLiveData.setValue(meal);
+        mMealMutableLiveData.setValue(mealModel);
     }
 
-    public LiveData<Meal> getSelectedMeal() {
+    public LiveData<MealModel> getSelectedMeal() {
         return mMealMutableLiveData;
     }
 
@@ -96,71 +106,43 @@ public class OldMealModel extends BaseViewModel {
         return selectedMealId;
     }
 
-    public void addToFavorites(Meal meal) {
-        saveMeal(meal);
-        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_ADDED_TO_FAV + meal.getStrMeal().replaceAll("\\s", "_"), null);
+    public void addToFavorites(MealModel mealModel) {
+        saveMeal(mealModel);
+        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_ADDED_TO_FAV + mealModel.getStrMeal().replaceAll("\\s", "_"), null);
     }
 
-    public void removeFromFavorites(Meal meal) {
-        deleteMeal(meal);
-        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_REMOVED_FROM_FAV + meal.getStrMeal().replaceAll("\\s", "_"), null);
+    public void removeFromFavorites(MealModel mealModel) {
+        deleteMeal(mealModel);
+        firebaseAnalytics.logEvent(Constants.FireBaseAnalyticsEvent.MEAL_REMOVED_FROM_FAV + mealModel.getStrMeal().replaceAll("\\s", "_"), null);
     }
 
-    public void saveMeal(Meal meal) {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                mDataRepository.saveMeal(meal);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.e(TAG, "onSubscribe");
-            }
-
-            @Override
-            public void onComplete() {
-                Log.e(TAG, "onComplete");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(TAG, "onError", e);
-            }
-        });
+    public void saveMeal(MealModel mealModel) {
+        mCompositeDisposable.add(
+                addFavoriteMeal.execute(AddFavoriteMeal.Params.params(mealModelMapper.transform(mealModel)))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(() -> {
+                            Log.e("MealViewModel", "Added to favorites");
+                        }));
     }
 
-    public void deleteMeal(Meal meal) {
-        Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                Log.e(TAG, "meal to be deleted : " + meal.getStrMeal());
-                mDataRepository.deleteMeal(meal);
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(new CompletableObserver() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-        });
+    public void deleteMeal(MealModel mealModel) {
+        mCompositeDisposable.add(
+                removeFavoriteMeal.execute(RemoveFavoriteMeal.Params.params(mealModelMapper.transform(mealModel)))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(() -> {
+                            Log.e("MealViewModel", "Removed to favorites");
+                        }));
     }
 
     public void fetchFavorites() {
-        mCompositeDisposable.add(mDataRepository.fetchFavorites()
-                .observeOn(AndroidSchedulers.mainThread())
+        mCompositeDisposable.add(getAllFavoriteMeal.execute(null)
+                .flatMapObservable(meals -> Observable.fromIterable(meals))
+                .map(meal -> mealModelMapper.transform(meal))
+                .toList()
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(meals -> {
                     mFavoriteMutableLiveData.postValue(meals);
-                    Log.e(TAG, "meals.size()" + meals.size());
                     if (meals.size() <= 0) {
                         setIsNoFavorites(true);
                         return;
@@ -170,7 +152,7 @@ public class OldMealModel extends BaseViewModel {
         );
     }
 
-    public LiveData<List<Meal>> getFavouriteMeals() {
+    public LiveData<List<MealModel>> getFavouriteMeals() {
         return mFavoriteMutableLiveData;
     }
 

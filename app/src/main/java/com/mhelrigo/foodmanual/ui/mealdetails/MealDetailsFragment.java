@@ -18,13 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.RequestManager;
 import com.mhelrigo.foodmanual.OldMealModel;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealDetailsBinding;
 import com.mhelrigo.foodmanual.ui.home.HomeViewModel;
 import com.mhelrigo.foodmanual.utils.Constants;
-import com.mhelrigo.foodmanual.viewmodels.ViewModelProviderFactory;
 
 import java.util.Arrays;
 
@@ -64,8 +62,8 @@ public class MealDetailsFragment extends Fragment {
         setRetainInstance(true);
 
         mOldMealModel
-                = new ViewModelProvider(this).get(OldMealModel.class);
-        mHomeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+                = new ViewModelProvider(getActivity()).get(OldMealModel.class);
+        mHomeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("mealId")) {

@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import io.reactivex.Single;
 import mhelrigo.foodmanual.data.repository.ingredient.remote.IngredientApi;
-import mhelrigo.foodmanual.domain.model.ingredient.Ingredients;
+import mhelrigo.foodmanual.domain.entity.ingredient.IngredientsEntity;
 import mhelrigo.foodmanual.domain.repository.IngredientRepository;
 
 @Singleton
@@ -18,7 +18,7 @@ public class IngredientRepositoryImpl implements IngredientRepository {
     }
 
     @Override
-    public Single<Ingredients> getAll() {
+    public Single<IngredientsEntity> getAll() {
         return ingredientApi.getAll();
     }
 }
