@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import mhelrigo.foodmanual.data.mapper.MealDatabaseMapper;
+import mhelrigo.foodmanual.data.mapper.MealMapper;
 import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 import mhelrigo.foodmanual.data.repository.meal.remote.MealApi;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
@@ -19,50 +19,54 @@ import mhelrigo.foodmanual.domain.repository.MealRepository;
 public class MealRepositoryImpl implements MealRepository {
     private MealApi mealApi;
     private MealDao mealDao;
-    private MealDatabaseMapper mealDatabaseMapper;
+    private MealMapper mealMapper;
 
     @Inject
-    public MealRepositoryImpl(MealApi mealApi, MealDao mealDao, MealDatabaseMapper mealDatabaseMapper) {
+    public MealRepositoryImpl(MealApi mealApi, MealDao mealDao, MealMapper mealMapper) {
         this.mealApi = mealApi;
         this.mealDao = mealDao;
-        this.mealDatabaseMapper = mealDatabaseMapper;
+        this.mealMapper = mealMapper;
     }
 
     @Override
     public Single<MealsEntity> getLatest() {
-        return mealApi.getLatest();
+        return mealApi.getLatest()
+                .map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
     }
 
     @Override
     public Single<MealsEntity> getRandomly() {
-        return mealApi.getRandomly();
+        return mealApi.getRandomly()
+                .map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
     }
 
     @Override
     public Single<MealsEntity> getDetails(String id) {
-        return mealApi.getDetails(id);
+        return mealApi.getDetails(id)
+                .map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
     }
 
     @Override
     public Single<MealsEntity> searchByCategory(String category) {
-        return mealApi.searchByCategory(category);
+        return mealApi.searchByCategory(category)
+                .map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
     }
 
     @Override
     public Completable addFavorite(MealEntity mealEntity) {
-        return mealDao.addFavorite(mealDatabaseMapper.transform(mealEntity));
+        return mealDao.addFavorite(mealMapper.transform(mealEntity));
     }
 
     @Override
     public Completable removeFavorite(MealEntity mealEntity) {
-        return mealDao.removeFavorite(mealDatabaseMapper.transform(mealEntity));
+        return mealDao.removeFavorite(mealMapper.transform(mealEntity));
     }
 
     @Override
     public Single<List<MealEntity>> getAllFavorites() {
         return mealDao.getAllFavorites()
                 .flatMapObservable(Observable::fromIterable)
-                .map(mealDatabaseMapper::transform)
+                .map(mealMapper::transform)
                 .toList();
     }
 }

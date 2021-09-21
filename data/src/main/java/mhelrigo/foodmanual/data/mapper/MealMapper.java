@@ -3,13 +3,15 @@ package mhelrigo.foodmanual.data.mapper;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import mhelrigo.foodmanual.data.entity.MealDatabaseEntity;
+import mhelrigo.foodmanual.data.entity.meal.MealDatabaseEntity;
+import mhelrigo.foodmanual.data.entity.meal.MealsApiEntity;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
+import mhelrigo.foodmanual.domain.entity.meal.MealsEntity;
 
 @Singleton
-public class MealDatabaseMapper {
+public class MealMapper {
     @Inject
-    public MealDatabaseMapper() {
+    public MealMapper() {
     }
 
     public MealDatabaseEntity transform(MealEntity mealEntity) {
@@ -120,5 +122,9 @@ public class MealDatabaseMapper {
                 mealDatabaseEntity.getStrSource(),
                 mealDatabaseEntity.getDateModified(),
                 mealDatabaseEntity.isFavorite());
+    }
+
+    public MealsEntity transform(MealsApiEntity mealsApiEntity) {
+        return new MealsEntity(mealsApiEntity.getMeals());
     }
 }

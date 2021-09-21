@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import io.reactivex.Single;
+import mhelrigo.foodmanual.data.entity.ingredient.IngredientApiEntity;
+import mhelrigo.foodmanual.data.mapper.IngredientMapper;
 import mhelrigo.foodmanual.data.repository.ingredient.IngredientRepositoryImpl;
 import mhelrigo.foodmanual.data.repository.ingredient.remote.IngredientApi;
 import mhelrigo.foodmanual.domain.entity.ingredient.IngredientsEntity;
@@ -24,16 +26,19 @@ public class IngredientEntityRepositoryTest {
     IngredientApi ingredientApi;
 
     @Mock
-    IngredientsEntity ingredientsEntity;
+    IngredientMapper ingredientMapper;
+
+    @Mock
+    IngredientApiEntity ingredientApiEntity;
 
     @Before
     public void setUp() throws Exception {
-        ingredientRepository = new IngredientRepositoryImpl(ingredientApi);
+        ingredientRepository = new IngredientRepositoryImpl(ingredientApi, ingredientMapper);
     }
 
     @Test
     public void getAll() {
-        given(ingredientApi.getAll()).willReturn(Single.just(ingredientsEntity));
+        given(ingredientApi.getAll()).willReturn(Single.just(ingredientApiEntity));
         ingredientRepository.getAll().test();
 
         verify(ingredientApi).getAll();

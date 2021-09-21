@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.reactivex.Observable;
-import mhelrigo.foodmanual.data.mapper.MealDatabaseMapper;
+import mhelrigo.foodmanual.data.mapper.MealMapper;
 import mhelrigo.foodmanual.data.repository.FoodManualDatabase;
 import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
@@ -27,7 +27,7 @@ public class MealDatabaseEntityEntityDaoTest {
 
     MealEntity mealEntity;
 
-    public MealDatabaseMapper mealDatabaseMapper;
+    public MealMapper mealMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +35,7 @@ public class MealDatabaseEntityEntityDaoTest {
         foodManualDatabase = Room.inMemoryDatabaseBuilder(context, FoodManualDatabase.class).build();
         mealDao = foodManualDatabase.mealDao();
 
-        mealDatabaseMapper = new MealDatabaseMapper();
+        mealMapper = new MealMapper();
         mealEntity = mockMeal();
     }
 
@@ -46,20 +46,20 @@ public class MealDatabaseEntityEntityDaoTest {
 
     @Test
     public void addAndVerifyFavorite() {
-        mealDao.addFavorite(mealDatabaseMapper.transform(mealEntity)).test();
+        mealDao.addFavorite(mealMapper.transform(mealEntity)).test();
         verifyWriteFromDatabaseByBoolean(true);
     }
 
     @Test
     public void removeAndVerifyFavorite() {
-        mealDao.removeFavorite(mealDatabaseMapper.transform(mealEntity)).test();
+        mealDao.removeFavorite(mealMapper.transform(mealEntity)).test();
         verifyWriteFromDatabaseByBoolean(false);
     }
 
     private void verifyWriteFromDatabaseByBoolean(Boolean value) {
         mealDao.getAllFavorites()
                 .flatMapObservable(meals -> Observable.fromIterable(meals))
-                .map(mealDatabaseMapper::transform).toList()
+                .map(mealMapper::transform).toList()
                 .subscribe(meals -> {
                     assertThat(meals.isEmpty(), not(value));
                 });

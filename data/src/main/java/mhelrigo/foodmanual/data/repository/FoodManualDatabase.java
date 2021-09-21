@@ -3,7 +3,7 @@ package mhelrigo.foodmanual.data.repository;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-import mhelrigo.foodmanual.data.entity.MealDatabaseEntity;
+import mhelrigo.foodmanual.data.entity.meal.MealDatabaseEntity;
 import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 
 @Database(entities = {MealDatabaseEntity.class}, version = 1, exportSchema = false)

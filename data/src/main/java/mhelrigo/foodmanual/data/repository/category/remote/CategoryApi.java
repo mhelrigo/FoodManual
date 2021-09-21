@@ -1,10 +1,10 @@
 package mhelrigo.foodmanual.data.repository.category.remote;
 
 import io.reactivex.Single;
-import mhelrigo.foodmanual.domain.entity.category.CategoriesEntity;
+import mhelrigo.foodmanual.data.entity.category.CategoriesApiEntity;
 import retrofit2.http.GET;
 
 public interface CategoryApi {
     @GET("categories.php")
-    Single<CategoriesEntity> getAll();
+    Single<CategoriesApiEntity> getAll();
 }

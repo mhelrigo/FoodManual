@@ -10,7 +10,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import mhelrigo.foodmanual.data.entity.MealDatabaseEntity;
+import mhelrigo.foodmanual.data.entity.meal.MealDatabaseEntity;
 
 @Dao
 public interface MealDao {

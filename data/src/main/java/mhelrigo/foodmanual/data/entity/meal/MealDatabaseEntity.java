@@ -1,4 +1,4 @@
-package mhelrigo.foodmanual.data.entity;
+package mhelrigo.foodmanual.data.entity.meal;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

@@ -1,6 +1,7 @@
 package mhelrigo.foodmanual.data.repository.remote;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.google.gson.Gson;
@@ -16,13 +17,14 @@ import java.io.IOException;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import mhelrigo.foodmanual.data.entity.meal.MealsApiEntity;
 import mhelrigo.foodmanual.data.repository.meal.remote.MealApi;
 import mhelrigo.foodmanual.domain.entity.meal.MealsEntity;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MealDatabaseEntityEntityApiTest {
+public class MealApiTest {
     private MockWebServer mockWebServer;
     private MockResponse mockResponse;
 
@@ -34,7 +36,7 @@ public class MealDatabaseEntityEntityApiTest {
     private String FAKE_MEAL_NAME = "Fresh sardines";
     private String FAKE_CATEGORY = "Beef";
 
-    private MealsEntity mocked;
+    private MealsApiEntity mocked;
 
     @Before
     public void setUp() throws Exception {
@@ -50,13 +52,13 @@ public class MealDatabaseEntityEntityApiTest {
                 .setResponseCode(200)
                 .setBody(FAKE_JSON_RESPONSE);
 
-        mocked = gson.fromJson(FAKE_JSON_RESPONSE, MealsEntity.class);
+        mocked = gson.fromJson(FAKE_JSON_RESPONSE, MealsApiEntity.class);
         mockWebServer.enqueue(mockResponse);
     }
 
     @Test
     public void getTest() {
-        MealsEntity actual = mealApi.getLatest()
+        MealsApiEntity actual = mealApi.getLatest()
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .blockingGet();
@@ -66,7 +68,7 @@ public class MealDatabaseEntityEntityApiTest {
 
     @Test
     public void getRandomly() {
-        MealsEntity actual = mealApi.getRandomly()
+        MealsApiEntity actual = mealApi.getRandomly()
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .blockingGet();
@@ -76,7 +78,7 @@ public class MealDatabaseEntityEntityApiTest {
 
     @Test
     public void getDetails() {
-        MealsEntity actual = mealApi.getDetails(FAKE_MEAL_NAME)
+        MealsApiEntity actual = mealApi.getDetails(FAKE_MEAL_NAME)
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .blockingGet();
@@ -86,7 +88,7 @@ public class MealDatabaseEntityEntityApiTest {
 
     @Test
     public void searchByCategory() {
-        MealsEntity actual = mealApi.searchByCategory(FAKE_CATEGORY)
+        MealsApiEntity actual = mealApi.searchByCategory(FAKE_CATEGORY)
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .blockingGet();

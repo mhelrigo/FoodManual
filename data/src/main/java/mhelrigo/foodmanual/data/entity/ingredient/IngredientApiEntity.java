@@ -1,11 +1,16 @@
-package mhelrigo.foodmanual.domain.entity.ingredient;
+package mhelrigo.foodmanual.data.entity.ingredient;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class IngredientsEntity {
+import mhelrigo.foodmanual.domain.entity.ingredient.IngredientEntity;
+
+public class IngredientApiEntity {
+    @SerializedName("meals")
     private List<IngredientEntity> ingredientEntity;
 
-    public IngredientsEntity(List<IngredientEntity> ingredientEntity) {
+    public IngredientApiEntity(List<IngredientEntity> ingredientEntity) {
         this.ingredientEntity = ingredientEntity;
     }
 

@@ -29,6 +29,7 @@ versions.room = "2.2.5"
 versions.guava = "30.0-jre"
 versions.navigationFragmentKtx = "2.3.1"
 versions.mockito = "1.10.19"
+versions.mockWebServer = "4.9.1"
 versions.hilt = "2.38.1"
 
 def dep = [:]
@@ -73,6 +74,7 @@ test.jUnit = "junit:junit:$versions.jUnit"
 test.extJUnit = "androidx.test.ext:junit:$versions.extJUnit"
 test.espressoCore = "androidx.test.espresso:espresso-core:$versions.espressoCore"
 test.mockito = "org.mockito:mockito-core:$versions.mockito"
+test.mockWebServer = "com.squareup.okhttp3:mockwebserver:$versions.mockWebServer"
 
 def rx = [:]
 rx.rxJava = "io.reactivex.rxjava2:rxjava:$versions.rxJava"

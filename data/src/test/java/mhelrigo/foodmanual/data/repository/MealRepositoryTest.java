@@ -13,15 +13,15 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import io.reactivex.Single;
-import mhelrigo.foodmanual.data.mapper.MealDatabaseMapper;
+import mhelrigo.foodmanual.data.entity.meal.MealsApiEntity;
+import mhelrigo.foodmanual.data.mapper.MealMapper;
 import mhelrigo.foodmanual.data.repository.meal.MealRepositoryImpl;
 import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 import mhelrigo.foodmanual.data.repository.meal.remote.MealApi;
-import mhelrigo.foodmanual.domain.entity.meal.MealsEntity;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MealDatabaseEntityEntityRepositoryTest {
+public class MealRepositoryTest {
     private static final String FAKE_MEAL_ID = "52771";
     private static final String FAKE_CATEGORY = "Vegetarian";
 
@@ -32,22 +32,22 @@ public class MealDatabaseEntityEntityRepositoryTest {
     @Mock
     public MealDao mealDao;
     @Mock
-    public MealDatabaseMapper mealDatabaseMapper;
+    public MealMapper mealMapper;
 
     @Mock
-    public MealsEntity mealsEntity;
+    public MealsApiEntity mealsApiEntity;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        mealRepository = new MealRepositoryImpl(mealApi, mealDao, mealDatabaseMapper);
+        mealRepository = new MealRepositoryImpl(mealApi, mealDao, mealMapper);
     }
 
     @Test
     public void getLatest() {
-        given(mealApi.getLatest()).willReturn(Single.just(mealsEntity));
+        given(mealApi.getLatest()).willReturn(Single.just(mealsApiEntity));
         mealRepository.getLatest().test();
 
         verify(mealApi).getLatest();
@@ -56,7 +56,7 @@ public class MealDatabaseEntityEntityRepositoryTest {
 
     @Test
     public void getRandomly() {
-        given(mealApi.getRandomly()).willReturn(Single.just(mealsEntity));
+        given(mealApi.getRandomly()).willReturn(Single.just(mealsApiEntity));
         mealRepository.getRandomly().test();
 
         verify(mealApi).getRandomly();
@@ -65,7 +65,7 @@ public class MealDatabaseEntityEntityRepositoryTest {
 
     @Test
     public void getDetails() {
-        given(mealApi.getDetails(FAKE_MEAL_ID)).willReturn(Single.just(mealsEntity));
+        given(mealApi.getDetails(FAKE_MEAL_ID)).willReturn(Single.just(mealsApiEntity));
         mealRepository.getDetails(FAKE_MEAL_ID).test();
 
         verify(mealApi).getDetails(FAKE_MEAL_ID);
@@ -74,7 +74,7 @@ public class MealDatabaseEntityEntityRepositoryTest {
 
     @Test
     public void searchByCategory() {
-        given(mealApi.searchByCategory(FAKE_CATEGORY)).willReturn(Single.just(mealsEntity));
+        given(mealApi.searchByCategory(FAKE_CATEGORY)).willReturn(Single.just(mealsApiEntity));
         mealRepository.searchByCategory(FAKE_CATEGORY).test();
 
         verify(mealApi).searchByCategory(FAKE_CATEGORY);
