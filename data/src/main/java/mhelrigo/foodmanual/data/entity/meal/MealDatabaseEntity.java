@@ -7,7 +7,7 @@ import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 
 @Entity
 public class MealDatabaseEntity {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     private int id;
     private String idMeal;
     private String strMeal;
@@ -118,7 +118,7 @@ public class MealDatabaseEntity {
     }
 
     public int getId() {
-        return id;
+        return Integer.parseInt(idMeal);
     }
 
     public void setId(int id) {

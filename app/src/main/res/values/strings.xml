@@ -7,7 +7,14 @@
     <string name="search">Search...</string>
     <string name="no_records_found">No manuals found Chef!!!</string>
 
+    <string name="hmmm_nothing_to_cook_here">Hmmm, nothing to cook here...</string>
+
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="settings">Settings</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="instruction">Instruction</string>
+    <string name="enable_night_mode">Night Mode</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hmmm_nothing_to_cook_here">Hmmm, nothing to cook here...</string>
 </resources>

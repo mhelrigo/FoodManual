@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 import mhelrigo.foodmanual.domain.usecase.base.UseCase;
 
@@ -18,7 +19,9 @@ public class MarkAllFavoriteMeal extends UseCase<Observable<MealEntity>, MarkAll
 
     @Override
     public Observable<MealEntity> execute(Params parameter) {
-        return Observable.fromIterable(parameter.toBeMarked).concatMap(toBeMarked ->
+        return Observable.fromIterable(parameter.toBeMarked)
+                .subscribeOn(Schedulers.computation())
+                .concatMap(toBeMarked ->
                 Observable.fromIterable(parameter.favorites)
                         .filter(favorite -> toBeMarked.getIdMeal().equals(favorite.getIdMeal())).map(meal -> {
                     meal.setFavorite(true);

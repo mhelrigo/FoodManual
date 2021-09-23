@@ -8,7 +8,7 @@ import android.os.Handler;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.ui.home.HomeActivity;
+import com.mhelrigo.foodmanual.ui.HomeActivity;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -26,7 +26,7 @@ public class SplashScreen extends AppCompatActivity {
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
             shimmerFrameLayoutSplashScreen.stopShimmer();
-            startActivity(new Intent(SplashScreen.this, HomeActivity.class));
+            startActivity(new Intent(this, HomeActivity.class));
             finish();
         }, 3000);
     }

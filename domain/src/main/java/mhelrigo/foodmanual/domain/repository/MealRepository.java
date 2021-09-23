@@ -9,10 +9,20 @@ import mhelrigo.foodmanual.domain.entity.meal.MealsEntity;
 
 public interface MealRepository {
     Single<MealsEntity> getLatest();
+
     Single<MealsEntity> getRandomly();
+
     Single<MealsEntity> getDetails(String id);
+
     Single<MealsEntity> searchByCategory(String category);
+
     Completable addFavorite(MealEntity mealEntity);
+
     Completable removeFavorite(MealEntity mealEntity);
+
     Single<List<MealEntity>> getAllFavorites();
+
+    Single<MealsEntity> searchByName(String name);
+
+    Single<MealsEntity> filterByMainIngredient(String ingredient);
 }

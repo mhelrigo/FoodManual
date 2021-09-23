@@ -1,15 +1,14 @@
 package com.mhelrigo.foodmanual.model.meal;
 
-import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.widget.ImageView;
 
-import androidx.databinding.BindingAdapter;
 import androidx.room.Ignore;
 
-import com.bumptech.glide.Glide;
+import com.mhelrigo.foodmanual.R;
 
 public class MealModel {
+    public static final String ID = "ID";
+
     private int id;
     private String idMeal;
     private String strMeal;
@@ -63,6 +62,7 @@ public class MealModel {
     private String strSource;
     private String dateModified = null;
     private boolean isFavorite;
+    private int viewHolderIndex;
 
     public MealModel(String idMeal, String strMeal, String strDrinkAlternate, String strCategory, String strArea, String strInstructions, String strMealThumb, String strTags, String strYoutube, String strIngredient1, String strIngredient2, String strIngredient3, String strIngredient4, String strIngredient5, String strIngredient6, String strIngredient7, String strIngredient8, String strIngredient9, String strIngredient10, String strIngredient11, String strIngredient12, String strIngredient13, String strIngredient14, String strIngredient15, String strIngredient16, String strIngredient17, String strIngredient18, String strIngredient19, String strIngredient20, String strMeasure1, String strMeasure2, String strMeasure3, String strMeasure4, String strMeasure5, String strMeasure6, String strMeasure7, String strMeasure8, String strMeasure9, String strMeasure10, String strMeasure11, String strMeasure12, String strMeasure13, String strMeasure14, String strMeasure15, String strMeasure16, String strMeasure17, String strMeasure18, String strMeasure19, String strMeasure20, String strSource, String dateModified) {
         this.idMeal = idMeal;
@@ -188,6 +188,10 @@ public class MealModel {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public void setViewHolderIndex(int viewHolderIndex) {
+        this.viewHolderIndex = viewHolderIndex;
     }
 
     public String getIdMeal() {
@@ -394,6 +398,10 @@ public class MealModel {
         return dateModified;
     }
 
+    public int getViewHolderIndex() {
+        return viewHolderIndex;
+    }
+
     public static boolean checkIfMeasurementIsEmpty(String measurement){
         return measurement == null || measurement.equals("") || measurement.equals(" ");
     }
@@ -425,6 +433,16 @@ public class MealModel {
                 (this.checkIfMeasurementIsEmpty(this.getStrMeasure20()) ? "" : this.getStrMeasure20() + " of ") + (this.checkIfIngredientIsEmpty(this.getStrIngredient20()) ? "" : this.getStrIngredient20() + "\n");
     }
 
+    public Integer returnIconForFavorite() {
+        if (isFavorite) {
+            return R.drawable.ic_favorite_red;
+        } else if (!isFavorite) {
+            return R.drawable.ic_favorite_filled;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof MealModel)) {
@@ -440,17 +458,5 @@ public class MealModel {
     @Override
     public int hashCode() {
         return Integer.parseInt(idMeal);
-    }
-
-    @Ignore
-    @BindingAdapter({"bind:imageUrl"})
-    public static void image(ImageView view, String imageUrl){
-        Glide.with(view.getContext()).load(imageUrl).into(view);
-    }
-
-    @Ignore
-    @BindingAdapter({"bind:src"})
-    public static void setImageViewResource(ImageView imageView, Drawable drawable) {
-        imageView.setImageDrawable(drawable);
     }
 }

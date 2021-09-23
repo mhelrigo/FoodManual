@@ -35,6 +35,10 @@ android {
     dataBinding {
         enabled = true
     }
+
+    viewBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -106,6 +110,13 @@ dependencies {
     annotationProcessor dep.android.roomCompiler
 
     implementation dep.android.guava
+
+    // Logging
+    implementation dep.android.timber
+
+
+    implementation dep.android.navFragment
+    implementation dep.android.navUi
 }
 
 apply plugin: 'com.google.gms.google-services'

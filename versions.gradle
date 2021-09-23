@@ -31,6 +31,8 @@ versions.navigationFragmentKtx = "2.3.1"
 versions.mockito = "1.10.19"
 versions.mockWebServer = "4.9.1"
 versions.hilt = "2.38.1"
+versions.navigationComp = "2.3.5"
+versions.timber = "4.7.1"
 
 def dep = [:]
 dep.gradle = "com.android.tools.build:gradle:$versions.gradle"
@@ -68,6 +70,9 @@ android.hiltGradle = "com.google.dagger:hilt-android-gradle-plugin:$versions.hil
 android.hilt = "com.google.dagger:hilt-android:$versions.hilt"
 android.hiltCore = "com.google.dagger:hilt-core:$versions.hilt"
 android.hiltCompiler = "com.google.dagger:hilt-android-compiler:$versions.hilt"
+android.navFragment = "androidx.navigation:navigation-fragment:$versions.navigationComp"
+android.navUi = "androidx.navigation:navigation-ui:$versions.navigationComp"
+android.timber = "com.jakewharton.timber:timber:$versions.timber"
 
 def test = [:]
 test.jUnit = "junit:junit:$versions.jUnit"

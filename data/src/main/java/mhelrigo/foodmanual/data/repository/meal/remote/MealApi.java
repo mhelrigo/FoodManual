@@ -18,4 +18,10 @@ public interface MealApi {
 
     @GET("filter.php")
     Single<MealsApiEntity> searchByCategory(@Query("c") String category);
+
+    @GET("search.php")
+    Single<MealsApiEntity> searchByName(@Query("s") String name);
+
+    @GET("filter.php")
+    Single<MealsApiEntity> filterByMainIngredient(@Query("i") String ingredient);
 }

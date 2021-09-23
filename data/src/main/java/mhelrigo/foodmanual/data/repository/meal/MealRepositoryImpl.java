@@ -69,4 +69,14 @@ public class MealRepositoryImpl implements MealRepository {
                 .map(mealMapper::transform)
                 .toList();
     }
+
+    @Override
+    public Single<MealsEntity> searchByName(String name) {
+        return mealApi.searchByName(name).map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
+    }
+
+    @Override
+    public Single<MealsEntity> filterByMainIngredient(String ingredient) {
+        return mealApi.filterByMainIngredient(ingredient).map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
+    }
 }
