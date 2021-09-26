@@ -1,4 +1,4 @@
-package com.mhelrigo.foodmanual.ui.ingredient;
+package com.mhelrigo.foodmanual.ui.category;
 
 import android.os.Bundle;
 
@@ -9,12 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.databinding.FragmentIngredientDetailBinding;
-import com.mhelrigo.foodmanual.model.ingredient.IngredientModel;
+import com.mhelrigo.foodmanual.databinding.FragmentCategoryDetailBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.ui.base.BaseFragment;
 import com.mhelrigo.foodmanual.ui.base.ViewState;
@@ -24,37 +22,38 @@ import com.mhelrigo.foodmanual.ui.meal.MealViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @AndroidEntryPoint
-public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDetailBinding> {
+public class CategoryDetailFragment extends BaseFragment<FragmentCategoryDetailBinding> {
+    private CategoryViewModel categoryViewModel;
     private MealViewModel mealViewModel;
-    private IngredientViewModel ingredientViewModel;
 
     private MealRecyclerViewAdapter mealRecyclerViewAdapter;
 
-    public IngredientDetailFragment() {
+    public CategoryDetailFragment() {
         // Required empty public constructor
     }
 
     @Override
     public int layoutId() {
-        return R.layout.fragment_ingredient_detail;
+        return R.layout.fragment_category_detail;
     }
 
     @Override
-    public FragmentIngredientDetailBinding inflateLayout(@NonNull LayoutInflater inflater) {
-        return FragmentIngredientDetailBinding.inflate(inflater);
+    public FragmentCategoryDetailBinding inflateLayout(@NonNull LayoutInflater inflater) {
+        return FragmentCategoryDetailBinding.inflate(inflater);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        categoryViewModel = new ViewModelProvider(getActivity()).get(CategoryViewModel.class);
         mealViewModel = new ViewModelProvider(getActivity()).get(MealViewModel.class);
-        ingredientViewModel = new ViewModelProvider(getActivity()).get(IngredientViewModel.class);
 
         setUpRecyclerView();
 
-        handleIngredientData();
+        handleCategoryData();
         handleFilteredMeals();
     }
 
@@ -69,7 +68,7 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
         Disposable v1 = mealRecyclerViewAdapter.expandDetail.subscribe(mealModel -> {
             Bundle v2 = new Bundle();
             v2.putString(MealModel.ID, mealModel.getIdMeal());
-            findNavController(this).navigate(R.id.action_ingredientDetailFragment_to_mealDetailFragment, v2);
+            findNavController(this).navigate(R.id.action_categoryDetailFragment_to_mealDetailFragment, v2);
         });
 
         mealViewModel.compositeDisposable.add(v0);
@@ -79,24 +78,26 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
         binding.recyclerViewFilteredMeals.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void handleIngredientData() {
-        ingredientViewModel.ingredient().observe(getViewLifecycleOwner(), ingredientModel -> {
-            binding.textViewIngredient.setText(ingredientModel.getStrIngredient());
+    private void handleCategoryData() {
+        categoryViewModel.category().observe(getViewLifecycleOwner(), categoryModel -> {
+            binding.textViewCategory.setText(categoryModel.getStrCategory());
 
-            if (ingredientModel.strDescriptionEmpty()) {
+            Timber.e(categoryModel.getStrCategory());
+
+            if (categoryModel.strDescriptionEmpty()) {
                 binding.textViewDescription.setVisibility(View.GONE);
                 binding.imageViewThumbnail.setVisibility(View.GONE);
             }
 
-            binding.textViewDescription.setText(ingredientModel.getStrDescription());
-            Glide.with(getContext()).load(ingredientModel.thumbnail()).into(binding.imageViewThumbnail);
+            binding.textViewDescription.setText(categoryModel.getStrCategoryDescription());
+            Glide.with(getContext()).load(categoryModel.getStrCategoryThumb()).into(binding.imageViewThumbnail);
 
-            mealViewModel.filterMealsByMainIngredient(ingredientModel.getStrIngredient());
+            mealViewModel.filterMealsByCategory(categoryModel.getStrCategory());
         });
     }
 
     public void handleFilteredMeals() {
-        mealViewModel.mealsFilteredByMainIngredient().observe(getViewLifecycleOwner(), listResultWrapper -> {
+        mealViewModel.mealsFilteredByCategory().observe(getViewLifecycleOwner(), listResultWrapper -> {
             if (listResultWrapper.getViewState().equals(ViewState.LOADING)) {
                 processLoadingState(listResultWrapper.getViewState(), binding.imageViewLoading);
                 binding.imageViewLoading.setVisibility(View.VISIBLE);

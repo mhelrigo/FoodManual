@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
 import mhelrigo.foodmanual.domain.entity.meal.MealsEntity;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 import mhelrigo.foodmanual.domain.usecase.base.UseCase;

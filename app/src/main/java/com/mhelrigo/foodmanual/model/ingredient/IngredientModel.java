@@ -1,10 +1,6 @@
 package com.mhelrigo.foodmanual.model.ingredient;
 
 public class IngredientModel {
-    public static final String NAME = "NAME";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String THUMBNAIL = "THUMBNAIL";
-
     private String idIngredient;
     private String strIngredient;
     private String strDescription;
@@ -35,6 +31,10 @@ public class IngredientModel {
 
     public String getStrDescription() {
         return strDescription;
+    }
+
+    public boolean strDescriptionEmpty() {
+        return getStrDescription() == null;
     }
 
     public void setStrDescription(String strDescription) {

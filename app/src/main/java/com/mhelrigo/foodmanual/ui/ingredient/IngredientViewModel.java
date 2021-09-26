@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.mhelrigo.foodmanual.mapper.IngredientModelMapper;
 import com.mhelrigo.foodmanual.model.ingredient.IngredientModel;
+import com.mhelrigo.foodmanual.ui.base.ResultWrapper;
+import com.mhelrigo.foodmanual.ui.base.ViewState;
 
 import java.util.List;
 
@@ -25,10 +27,16 @@ public class IngredientViewModel extends ViewModel {
 
     public CompositeDisposable compositeDisposable;
 
-    private MutableLiveData<List<IngredientModel>> ingredients;
+    private MutableLiveData<ResultWrapper<List<IngredientModel>>> ingredients;
 
-    public LiveData<List<IngredientModel>> ingredients() {
+    public LiveData<ResultWrapper<List<IngredientModel>>> ingredients() {
         return ingredients;
+    }
+
+    private MutableLiveData<IngredientModel> ingredient;
+
+    public LiveData<IngredientModel> ingredient() {
+        return ingredient;
     }
 
     @Inject
@@ -39,6 +47,7 @@ public class IngredientViewModel extends ViewModel {
         compositeDisposable = new CompositeDisposable();
 
         ingredients = new MutableLiveData<>();
+        ingredient = new MutableLiveData<>();
     }
 
     public void requestForAllIngredient() {
@@ -48,9 +57,16 @@ public class IngredientViewModel extends ViewModel {
                 .map(ingredientEntity -> ingredientModelMapper.transform(ingredientEntity))
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> ingredients.postValue(ResultWrapper.loading()))
                 .subscribe(ingredientModels -> {
-                    ingredients.postValue(ingredientModels);
+                    ingredients.postValue(ResultWrapper.success(ingredientModels));
+                }, throwable -> {
+                    ingredients.postValue(ResultWrapper.error(throwable));
                 }));
+    }
+
+    public void setIngredient(IngredientModel p0) {
+        ingredient.postValue(p0);
     }
 
     @Override

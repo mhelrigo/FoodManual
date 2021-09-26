@@ -13,12 +13,19 @@
         <action
             android:id="@+id/action_mealListFragment_to_mealDetailFragment"
             app:destination="@id/mealDetailFragment" />
+        <action
+            android:id="@+id/action_mealListFragment_to_categoryDetailFragment"
+            app:destination="@id/categoryDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.mhelrigo.foodmanual.ui.meal.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/ingredientListFragment"
         android:name="com.mhelrigo.foodmanual.ui.ingredient.IngredientListFragment"
@@ -46,4 +53,13 @@
         android:name="com.mhelrigo.foodmanual.ui.meal.MealDetailFragment"
         android:label="fragment_meal_detail"
         tools:layout="@layout/fragment_meal_detail" />
+    <fragment
+        android:id="@+id/categoryDetailFragment"
+        android:name="com.mhelrigo.foodmanual.ui.category.CategoryDetailFragment"
+        android:label="fragment_category_detail"
+        tools:layout="@layout/fragment_category_detail" >
+        <action
+            android:id="@+id/action_categoryDetailFragment_to_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
+    </fragment>
 </navigation>

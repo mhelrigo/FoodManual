@@ -11,37 +11,35 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddFavoriteMealEntityTest {
-    private AddFavoriteMeal addFavoriteMeal;
+public class GetMealDetailsTest {
+    private static final String FAKE_MEAL_ID = "52771";
+
+    private GetMealDetails getMealDetails;
 
     @Mock
-    MealRepository mealRepository;
-
-    @Mock
-    MealEntity mealEntity;
+    private MealRepository mealRepository;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
-        addFavoriteMeal = new AddFavoriteMeal(mealRepository);
+        getMealDetails = new GetMealDetails(mealRepository);
     }
 
     @Test
-    public void addFavoriteSuccess() {
-        addFavoriteMeal.execute(AddFavoriteMeal.Params.params(mealEntity));
-        verify(mealRepository).addFavorite(mealEntity);
+    public void getDetailsSuccess() {
+        getMealDetails.execute(GetMealDetails.Params.params(FAKE_MEAL_ID));
+        verify(mealRepository).getDetails(FAKE_MEAL_ID);
         verifyNoMoreInteractions(mealRepository);
     }
 
     @Test
-    public void addFavoriteFailed() {
+    public void getDetailsFailed() {
         expectedException.expect(NullPointerException.class);
-        addFavoriteMeal.execute(null);
+        getMealDetails.execute(null);
     }
 }

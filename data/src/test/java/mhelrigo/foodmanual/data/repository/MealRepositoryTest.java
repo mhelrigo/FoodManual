@@ -24,6 +24,8 @@ import mhelrigo.foodmanual.domain.repository.MealRepository;
 public class MealRepositoryTest {
     private static final String FAKE_MEAL_ID = "52771";
     private static final String FAKE_CATEGORY = "Vegetarian";
+    private static final String FAKE_MEAL_NAME = "Kare-kare";
+    private static final String FAKE_INGREDIENT = "Puso ng Saging";
 
     private MealRepository mealRepository;
 
@@ -78,6 +80,24 @@ public class MealRepositoryTest {
         mealRepository.searchByCategory(FAKE_CATEGORY).test();
 
         verify(mealApi).searchByCategory(FAKE_CATEGORY);
+        verifyNoMoreInteractions(mealApi);
+    }
+
+    @Test
+    public void searchByName() {
+        given(mealApi.searchByName(FAKE_MEAL_NAME)).willReturn(Single.just(mealsApiEntity));
+        mealRepository.searchByName(FAKE_MEAL_NAME).test();
+
+        verify(mealApi).searchByName(FAKE_MEAL_NAME);
+        verifyNoMoreInteractions(mealApi);
+    }
+
+    @Test
+    public void filteredByMainIngredient() {
+        given(mealApi.filterByMainIngredient(FAKE_INGREDIENT)).willReturn(Single.just(mealsApiEntity));
+        mealRepository.filterByMainIngredient(FAKE_INGREDIENT).test();
+
+        verify(mealApi).filterByMainIngredient(FAKE_INGREDIENT);
         verifyNoMoreInteractions(mealApi);
     }
 }

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/drawable-anydpi/ic_arrow_back.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/drawable-anydpi/ic_back_arrow.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/drawable-anydpi/ic_clear.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/drawable-anydpi/ic_favorite.xml" value="0.2703125" />
@@ -36,8 +37,9 @@
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_ingredient_list.xml" value="0.13125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_latest_meal.xml" value="0.2418478260869565" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_meal_detail.xml" value="0.264" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_meal_list.xml" value="0.24230072463768115" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_meal_list.xml" value="0.2" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/fragment_settings.xml" value="0.13125" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/item_category.xml" value="0.13425925925925927" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/item_ingredient.xml" value="0.1265625" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/item_meal.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/FoodManual/app/src/main/res/layout/item_meal_detail_shimmer.xml" value="0.13125" />

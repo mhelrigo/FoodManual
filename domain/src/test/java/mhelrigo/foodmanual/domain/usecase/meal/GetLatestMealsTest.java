@@ -12,22 +12,22 @@ import org.mockito.runners.MockitoJUnitRunner;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetRandomMealsEntityTest {
-    private GetRandomMeals getRandomMeals;
+public class GetLatestMealsTest {
+    private GetLatestMeals getLatestMeals;
 
     @Mock
     MealRepository mealRepository;
 
     @Before
     public void setUp() {
-        getRandomMeals = new GetRandomMeals(mealRepository);
+        getLatestMeals = new GetLatestMeals(mealRepository);
     }
 
     @Test
-    public void getRandomlySuccess() {
-        getRandomMeals.execute(null);
+    public void getLatestSuccess() {
+        getLatestMeals.execute(null);
 
-        verify(mealRepository).getRandomly();
+        verify(mealRepository).getLatest();
         verifyNoMoreInteractions(mealRepository);
     }
 }

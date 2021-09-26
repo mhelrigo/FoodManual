@@ -14,10 +14,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SearchMealEntityByCategoryEntityTest {
+public class FilterMealByCategoryTest {
     private static final String FAKE_CATEGORY = "Vegetarian";
 
-    private SearchMealByCategory searchMealByCategory;
+    private FilterMealByCategory filterMealByCategory;
 
     @Mock
     public MealRepository mealRepository;
@@ -27,12 +27,12 @@ public class SearchMealEntityByCategoryEntityTest {
 
     @Before
     public void setUp() {
-        searchMealByCategory = new SearchMealByCategory(mealRepository);
+        filterMealByCategory = new FilterMealByCategory(mealRepository);
     }
 
     @Test
     public void searchByCategorySuccess() {
-        searchMealByCategory.execute(SearchMealByCategory.Params.params(FAKE_CATEGORY));
+        filterMealByCategory.execute(FilterMealByCategory.Params.params(FAKE_CATEGORY));
         verify(mealRepository).searchByCategory(FAKE_CATEGORY);
         verifyNoMoreInteractions(mealRepository);
     }
@@ -40,6 +40,6 @@ public class SearchMealEntityByCategoryEntityTest {
     @Test
     public void searchByCategoryFailed() {
         expectedException.expect(NullPointerException.class);
-        searchMealByCategory.execute(null);
+        filterMealByCategory.execute(null);
     }
 }

@@ -15,13 +15,11 @@ import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RemoveFavoriteMealEntityTest {
-    private static final String FAKE_MEAL_ID = "52771";
-
-    private RemoveFavoriteMeal removeFavoriteMeal;
+public class AddFavoriteMealTest {
+    private AddFavoriteMeal addFavoriteMeal;
 
     @Mock
-    public MealRepository mealRepository;
+    MealRepository mealRepository;
 
     @Mock
     MealEntity mealEntity;
@@ -31,19 +29,19 @@ public class RemoveFavoriteMealEntityTest {
 
     @Before
     public void setUp() {
-        removeFavoriteMeal = new RemoveFavoriteMeal(mealRepository);
+        addFavoriteMeal = new AddFavoriteMeal(mealRepository);
     }
 
     @Test
-    public void removeFavoriteSuccess() {
-        removeFavoriteMeal.execute(RemoveFavoriteMeal.Params.params(mealEntity));
-        verify(mealRepository).removeFavorite(mealEntity);
+    public void addFavoriteSuccess() {
+        addFavoriteMeal.execute(AddFavoriteMeal.Params.params(mealEntity));
+        verify(mealRepository).addFavorite(mealEntity);
         verifyNoMoreInteractions(mealRepository);
     }
 
     @Test
-    public void removeFavoriteFailed() {
+    public void addFavoriteFailed() {
         expectedException.expect(NullPointerException.class);
-        removeFavoriteMeal.execute(null);
+        addFavoriteMeal.execute(null);
     }
 }

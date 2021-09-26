@@ -9,16 +9,16 @@ import mhelrigo.foodmanual.domain.repository.MealRepository;
 import mhelrigo.foodmanual.domain.usecase.base.UseCase;
 
 @Singleton
-public class SearchMealByCategory extends UseCase<Single<MealsEntity>, SearchMealByCategory.Params> {
+public class FilterMealByCategory extends UseCase<Single<MealsEntity>, FilterMealByCategory.Params> {
     private MealRepository mealRepository;
 
     @Inject
-    public SearchMealByCategory(MealRepository mealRepository) {
+    public FilterMealByCategory(MealRepository mealRepository) {
         this.mealRepository = mealRepository;
     }
 
     @Override
-    public Single<MealsEntity> execute(SearchMealByCategory.Params parameter) {
+    public Single<MealsEntity> execute(FilterMealByCategory.Params parameter) {
         return mealRepository.searchByCategory(parameter.category);
     }
 

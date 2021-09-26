@@ -5,9 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.text.Editable;
@@ -15,49 +13,59 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealListBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.BaseFragment;
+import com.mhelrigo.foodmanual.ui.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.category.CategoryRecyclerViewAdapter;
+import com.mhelrigo.foodmanual.ui.category.CategoryViewModel;
+
+import java.util.List;
 
 import javax.inject.Singleton;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 @Singleton
 @AndroidEntryPoint
-public class MealListFragment extends BaseFragment {
-    private FragmentMealListBinding binding;
+public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
     private MealViewModel mealViewModel;
+    private CategoryViewModel categoryViewModel;
 
     private MealRecyclerViewAdapter mealRecyclerViewAdapter;
+    private CategoryRecyclerViewAdapter categoryRecyclerViewAdapter;
 
     public MealListFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentMealListBinding.inflate(inflater);
+    public int layoutId() {
+        return R.layout.fragment_meal_list;
+    }
 
-        return binding.getRoot();
+    @Override
+    public FragmentMealListBinding inflateLayout(@NonNull LayoutInflater inflater) {
+        return FragmentMealListBinding.inflate(inflater);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mealViewModel = new ViewModelProvider(getActivity()).get(MealViewModel.class);
+        categoryViewModel = new ViewModelProvider(getActivity()).get(CategoryViewModel.class);
 
-        setUpRecyclerView();
+        setUpSearchTextListeners();
+        setUpLatestMealsRecyclerView();
+        setUpCategoriesRecyclerView();
 
         handleLatestMealsData();
         handleSearchedMealsData();
+        handleCategoriesData();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -98,7 +106,7 @@ public class MealListFragment extends BaseFragment {
         });
     }
 
-    private void setUpRecyclerView() {
+    private void setUpLatestMealsRecyclerView() {
         mealRecyclerViewAdapter = new MealRecyclerViewAdapter();
 
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
@@ -119,16 +127,85 @@ public class MealListFragment extends BaseFragment {
         binding.recyclerViewLatestMeals.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    private void setUpCategoriesRecyclerView() {
+        categoryRecyclerViewAdapter = new CategoryRecyclerViewAdapter();
+
+        Disposable v0 = categoryRecyclerViewAdapter.expandCategoryDetail
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(categoryModel -> {
+                    categoryViewModel.setCategory(categoryModel);
+                    findNavController(this).navigate(R.id.action_mealListFragment_to_categoryDetailFragment);
+                });
+
+        categoryViewModel.compositeDisposable.add(v0);
+
+        binding.recyclerViewCategories.setAdapter(categoryRecyclerViewAdapter);
+        binding.recyclerViewCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+    }
+
     private void handleLatestMealsData() {
         mealViewModel.requestForLatestMeal();
         mealViewModel.latestMeals().observe(getViewLifecycleOwner(), mealModels -> {
-            mealRecyclerViewAdapter.meals.submitList(mealModels);
+            if (mealModels.getViewState().equals(ViewState.LOADING)) {
+                requestingForMealsUiSetup(mealModels.getViewState());
+            } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
+                mealsRequestedUiSetup(mealModels.getResult());
+            } else {
+                errorRequestingMealsUiSetup();
+            }
         });
     }
 
     private void handleSearchedMealsData() {
         mealViewModel.searchedMeals().observe(getViewLifecycleOwner(), mealModels -> {
-            mealRecyclerViewAdapter.meals.submitList(mealModels);
+            if (mealModels.getViewState().equals(ViewState.LOADING)) {
+                requestingForMealsUiSetup(mealModels.getViewState());
+            } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
+                mealsRequestedUiSetup(mealModels.getResult());
+            } else {
+                errorRequestingMealsUiSetup();
+            }
+        });
+    }
+
+    private void requestingForMealsUiSetup(ViewState p0) {
+        processLoadingState(p0, binding.imageViewLoading);
+        binding.imageViewLoading.setVisibility(View.VISIBLE);
+        binding.recyclerViewLatestMeals.setVisibility(View.GONE);
+        binding.textViewEmptyMeals.setVisibility(View.GONE);
+        binding.textViewErrorForMeals.setVisibility(View.GONE);
+    }
+
+    private void mealsRequestedUiSetup(List<MealModel> p0) {
+        binding.recyclerViewLatestMeals.setVisibility(View.VISIBLE);
+        binding.imageViewLoading.setVisibility(View.GONE);
+        binding.textViewEmptyMeals.setVisibility(View.GONE);
+        binding.textViewErrorForMeals.setVisibility(View.GONE);
+        if (p0 == null) {
+            binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
+            return;
+        }
+        mealRecyclerViewAdapter.meals.submitList(p0);
+    }
+
+    private void errorRequestingMealsUiSetup() {
+        binding.textViewErrorForMeals.setVisibility(View.VISIBLE);
+        binding.imageViewLoading.setVisibility(View.GONE);
+        binding.recyclerViewLatestMeals.setVisibility(View.GONE);
+        binding.textViewEmptyMeals.setVisibility(View.GONE);
+    }
+
+    private void handleCategoriesData() {
+        categoryViewModel.requestForCategories();
+        categoryViewModel.categories().observe(getViewLifecycleOwner(), listResultWrapper -> {
+            if (listResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
+                categoryRecyclerViewAdapter.categories.submitList(listResultWrapper.getResult());
+                binding.textViewCategories.setVisibility(View.VISIBLE);
+                binding.recyclerViewCategories.setVisibility(View.VISIBLE);
+            } else {
+                binding.textViewCategories.setVisibility(View.GONE);
+                binding.recyclerViewCategories.setVisibility(View.INVISIBLE);
+            }
         });
     }
 }

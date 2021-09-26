@@ -12,17 +12,17 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealDetailBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.BaseFragment;
+import com.mhelrigo.foodmanual.ui.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.base.ViewState;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 
 @AndroidEntryPoint
-public class MealDetailFragment extends BaseFragment {
-    private FragmentMealDetailBinding binding;
+public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> {
     private MealViewModel mealViewModel;
 
     public MealDetailFragment() {
@@ -30,12 +30,15 @@ public class MealDetailFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentMealDetailBinding.inflate(inflater);
-
-        return binding.getRoot();
+    public int layoutId() {
+        return R.layout.fragment_meal_detail;
     }
+
+    @Override
+    public FragmentMealDetailBinding inflateLayout(@NonNull LayoutInflater inflater) {
+        return FragmentMealDetailBinding.inflate(inflater);
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -51,23 +54,49 @@ public class MealDetailFragment extends BaseFragment {
     }
 
     private void handleMealData() {
-        mealViewModel.meal().observe(getViewLifecycleOwner(), mealModel -> {
-            binding.textViewName.setText(mealModel.getStrMeal());
-            binding.textViewShortDesc.setText(mealModel.getStrCategory() + " and " + mealModel.getStrArea());
-            binding.textViewMeasurements.setText(mealModel.doMeasurementAndIngredients());
-            binding.textViewInstruction.setText(mealModel.getStrInstructions());
+        mealViewModel.meal().observe(getViewLifecycleOwner(), mealModelResultWrapper -> {
+            if (mealModelResultWrapper.getViewState().equals(ViewState.LOADING)) {
+                processLoadingState(mealModelResultWrapper.getViewState(), binding.imageViewLoading);
 
-            Glide.with(getContext()).load(mealModel.getStrMealThumb()).into(binding.imageViewThumbnail);
+                binding.imageViewLoading.setVisibility(View.VISIBLE);
+                binding.constraintLayoutRootSuccess.setVisibility(View.GONE);
+                binding.textViewEmptyMeals.setVisibility(View.GONE);
+                binding.textViewErrorForMeals.setVisibility(View.GONE);
+            } else if (mealModelResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
+                MealModel mealModel = mealModelResultWrapper.getResult();
 
-            binding.imageViewFavorite
-                    .setImageDrawable(ResourcesCompat.getDrawable(binding.getRoot().getResources(), mealModel.returnIconForFavorite(), null));
+                binding.imageViewLoading.setVisibility(View.GONE);
+                binding.constraintLayoutRootSuccess.setVisibility(View.VISIBLE);
+                binding.textViewEmptyMeals.setVisibility(View.GONE);
+                binding.textViewErrorForMeals.setVisibility(View.GONE);
 
-            binding.imageViewFavorite
-                    .setOnClickListener(view -> mealViewModel.compositeDisposable.add(mealViewModel.toggleFavoriteOfAMeal(mealModel)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnComplete(() -> {
-                                requestForExpandedMealDetail();
-                            }).subscribe()));
+                if (mealModel == null) {
+                    binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                binding.textViewName.setText(mealModel.getStrMeal());
+                binding.textViewShortDesc.setText(mealModel.getStrCategory() + " and " + mealModel.getStrArea());
+                binding.textViewMeasurements.setText(mealModel.doMeasurementAndIngredients());
+                binding.textViewInstruction.setText(mealModel.getStrInstructions());
+
+                Glide.with(getContext()).load(mealModel.getStrMealThumb()).into(binding.imageViewThumbnail);
+
+                binding.imageViewFavorite
+                        .setImageDrawable(ResourcesCompat.getDrawable(binding.getRoot().getResources(), mealModel.returnIconForFavorite(), null));
+
+                binding.imageViewFavorite
+                        .setOnClickListener(view -> mealViewModel.compositeDisposable.add(mealViewModel.toggleFavoriteOfAMeal(mealModel)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnComplete(() -> {
+                                    requestForExpandedMealDetail();
+                                }).subscribe()));
+            } else {
+                binding.imageViewLoading.setVisibility(View.GONE);
+                binding.constraintLayoutRootSuccess.setVisibility(View.GONE);
+                binding.textViewEmptyMeals.setVisibility(View.GONE);
+                binding.textViewErrorForMeals.setVisibility(View.VISIBLE);
+            }
         });
     }
 }

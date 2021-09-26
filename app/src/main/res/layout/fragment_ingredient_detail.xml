@@ -25,6 +25,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/imageViewLoading"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gear"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescription" />
+
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="0dp"
@@ -44,16 +54,14 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:alpha="0.2"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.16" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewFilteredMeals"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/base_16"
             android:clipToPadding="false"
             android:paddingBottom="64dp"

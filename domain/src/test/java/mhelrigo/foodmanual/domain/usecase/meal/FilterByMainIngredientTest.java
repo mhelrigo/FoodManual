@@ -12,22 +12,23 @@ import org.mockito.runners.MockitoJUnitRunner;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetLatestMealsEntityTest {
-    private GetLatestMeals getLatestMeals;
+public class FilterByMainIngredientTest {
+    private static final String FAKE_INGREDIENT = "Chicken";
+
+    private FilterByMainIngredient filterByMainIngredient;
 
     @Mock
     MealRepository mealRepository;
 
     @Before
-    public void setUp() {
-        getLatestMeals = new GetLatestMeals(mealRepository);
+    public void setUp() throws Exception {
+        filterByMainIngredient = new FilterByMainIngredient(mealRepository);
     }
 
     @Test
-    public void getLatestSuccess() {
-        getLatestMeals.execute(null);
-
-        verify(mealRepository).getLatest();
+    public void filterMealsByMainIngredient() {
+        filterByMainIngredient.execute(FilterByMainIngredient.Params.params(FAKE_INGREDIENT));
+        verify(mealRepository).filterByMainIngredient(FAKE_INGREDIENT);
         verifyNoMoreInteractions(mealRepository);
     }
 }

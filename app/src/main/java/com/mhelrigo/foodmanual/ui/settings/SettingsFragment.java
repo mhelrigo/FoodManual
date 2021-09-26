@@ -4,15 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentSettingsBinding;
-import com.mhelrigo.foodmanual.ui.BaseFragment;
+import com.mhelrigo.foodmanual.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -22,8 +22,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @AndroidEntryPoint
-public class SettingsFragment extends BaseFragment {
-    private FragmentSettingsBinding binding;
+public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
     private SettingsViewModel settingsViewModel;
 
     public SettingsFragment() {
@@ -31,11 +30,13 @@ public class SettingsFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentSettingsBinding.inflate(inflater);
+    public int layoutId() {
+        return R.layout.fragment_meal_list;
+    }
 
-        return binding.getRoot();
+    @Override
+    public FragmentSettingsBinding inflateLayout(@NonNull LayoutInflater inflater) {
+        return FragmentSettingsBinding.inflate(inflater);
     }
 
     @Override

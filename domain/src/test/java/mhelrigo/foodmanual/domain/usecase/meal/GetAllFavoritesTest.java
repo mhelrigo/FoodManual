@@ -12,7 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import mhelrigo.foodmanual.domain.repository.MealRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetAllIngredientEntityCategoryEntityAreaEntityFavoritesTest {
+public class GetAllFavoritesTest {
     private GetAllFavoriteMeal getAllFavoriteMeal;
 
     @Mock

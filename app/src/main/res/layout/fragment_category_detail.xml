@@ -6,66 +6,60 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:padding="@dimen/base_8"
-    tools:context=".ui.meal.FavoritesFragment">
+    tools:context=".ui.category.CategoryDetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageViewLoading"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/gear"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
-            android:id="@+id/textViewEmptyMeals"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
-            android:text="@string/no_recipes_found"
-            android:textAlignment="center"
-            android:textSize="@dimen/base_16"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewErrorForMeals"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_light"
-            android:text="@string/whoops_something_went_wrong"
-            android:textAlignment="center"
-            android:textSize="@dimen/base_16"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewFavorites"
+            android:id="@+id/textViewCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
             android:fontFamily="@font/roboto_thin"
-            android:text="@string/favorites"
+            android:text="@string/category"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/imageViewLoading"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gear"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescription" />
+
+        <TextView
+            android:id="@+id/textViewDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/ingredients"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewCategory" />
+
+        <ImageView
+            android:id="@+id/imageViewThumbnail"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:alpha="0.2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFavoriteMeals"
+            android:id="@+id/recyclerViewFilteredMeals"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/base_16"
@@ -74,7 +68,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewFavorites"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescription"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

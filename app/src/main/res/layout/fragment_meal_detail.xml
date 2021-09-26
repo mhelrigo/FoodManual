@@ -12,20 +12,43 @@
         android:layout_height="match_parent"
         android:paddingBottom="64dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayoutRootLoading"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:visibility="gone">
+        <ImageView
+            android:id="@+id/imageViewLoading"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gear"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textViewEmptyMeals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/no_recipes_found"
+            android:textAlignment="center"
+            android:textSize="@dimen/base_16"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewErrorForMeals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/whoops_something_went_wrong"
+            android:textAlignment="center"
+            android:textSize="@dimen/base_16"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayoutRootSuccess"
