@@ -85,12 +85,12 @@ public class IngredientListFragment extends BaseFragment<FragmentIngredientListB
                 binding.textViewErrorForIngredients.setVisibility(View.GONE);
                 binding.recyclerViewIngredients.setVisibility(View.VISIBLE);
 
-                if (listResultWrapper.getResult() == null && listResultWrapper.getResult().isEmpty()) {
+                ingredientRecyclerViewAdapter.ingredients.submitList(listResultWrapper.getResult());
+
+                if (listResultWrapper.getResult() == null || listResultWrapper.getResult().isEmpty()) {
                     binding.textViewEmptyIngredients.setVisibility(View.VISIBLE);
                     return;
                 }
-
-                ingredientRecyclerViewAdapter.ingredients.submitList(listResultWrapper.getResult());
             } else {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.textViewEmptyIngredients.setVisibility(View.GONE);

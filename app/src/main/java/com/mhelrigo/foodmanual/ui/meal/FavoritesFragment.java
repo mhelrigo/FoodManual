@@ -21,7 +21,9 @@ import com.mhelrigo.foodmanual.ui.base.ViewState;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import timber.log.Timber;
 
 @AndroidEntryPoint
 public class FavoritesFragment extends BaseFragment<FragmentFavoritesBinding> {
@@ -59,8 +61,10 @@ public class FavoritesFragment extends BaseFragment<FragmentFavoritesBinding> {
 
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
                 .concatMapCompletable(mealModel -> mealViewModel.toggleFavoriteOfAMeal(mealModel)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))).subscribe();
+                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel)).doOnComplete(() -> {
+                            mealViewModel.requestForFavoriteMeals();
+                        }))
+                .subscribe();
 
         Disposable v1 = mealRecyclerViewAdapter.expandDetail
                 .observeOn(AndroidSchedulers.mainThread())
@@ -90,12 +94,12 @@ public class FavoritesFragment extends BaseFragment<FragmentFavoritesBinding> {
                 binding.textViewEmptyMeals.setVisibility(View.GONE);
                 binding.textViewErrorForMeals.setVisibility(View.GONE);
 
+                mealRecyclerViewAdapter.meals.submitList(mealModels.getResult());
+
                 if (mealModels.getResult() == null || mealModels.getResult().isEmpty()) {
                     binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
                     return;
                 }
-
-                mealRecyclerViewAdapter.meals.submitList(mealModels.getResult());
             } else {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.recyclerViewFavoriteMeals.setVisibility(View.GONE);

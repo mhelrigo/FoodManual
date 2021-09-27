@@ -70,7 +70,8 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
                 binding.textViewEmptyMeals.setVisibility(View.GONE);
                 binding.textViewErrorForMeals.setVisibility(View.GONE);
 
-                if (mealModel == null) {
+                if (mealModel.getStrInstructions() == null) {
+                    binding.constraintLayoutRootSuccess.setVisibility(View.GONE);
                     binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
                     return;
                 }

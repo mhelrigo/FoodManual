@@ -31,6 +31,7 @@ import mhelrigo.foodmanual.domain.usecase.meal.GetMealDetails;
 import mhelrigo.foodmanual.domain.usecase.meal.MarkAllFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.RemoveFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.SearchMealByName;
+import timber.log.Timber;
 
 @HiltViewModel
 public class MealViewModel extends ViewModel {

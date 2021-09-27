@@ -181,11 +181,13 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
         binding.imageViewLoading.setVisibility(View.GONE);
         binding.textViewEmptyMeals.setVisibility(View.GONE);
         binding.textViewErrorForMeals.setVisibility(View.GONE);
-        if (p0 == null) {
+
+        mealRecyclerViewAdapter.meals.submitList(p0);
+
+        if (p0 == null || p0.isEmpty()) {
             binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
             return;
         }
-        mealRecyclerViewAdapter.meals.submitList(p0);
     }
 
     private void errorRequestingMealsUiSetup() {
