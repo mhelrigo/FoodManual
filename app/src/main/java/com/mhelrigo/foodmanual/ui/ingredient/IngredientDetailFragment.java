@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentIngredientDetailBinding;
-import com.mhelrigo.foodmanual.model.ingredient.IngredientModel;
-import com.mhelrigo.foodmanual.model.meal.MealModel;
 import com.mhelrigo.foodmanual.ui.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.meal.MealDetailFragment;
+import com.mhelrigo.foodmanual.ui.meal.MealNavigator;
 import com.mhelrigo.foodmanual.ui.base.ViewState;
 import com.mhelrigo.foodmanual.ui.meal.MealRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.meal.MealViewModel;
@@ -26,7 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 @AndroidEntryPoint
-public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDetailBinding> {
+public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDetailBinding> implements MealNavigator {
     private MealViewModel mealViewModel;
     private IngredientViewModel ingredientViewModel;
 
@@ -56,6 +55,10 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
 
         handleIngredientData();
         handleFilteredMeals();
+
+        if (isTablet) {
+            refreshMealsWhenItemToggled();
+        }
     }
 
     private void setUpRecyclerView() {
@@ -64,12 +67,20 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
                 .concatMapCompletable(mealModel -> mealViewModel.toggleFavoriteOfAMeal(mealModel)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))).subscribe();
+                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))
+                        .doOnComplete(() -> {
+                            if (isTablet) {
+                                // Sync data on both screen
+                                mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
+                            }
+                        }))
+                .subscribe();
 
         Disposable v1 = mealRecyclerViewAdapter.expandDetail.subscribe(mealModel -> {
-            Bundle v2 = new Bundle();
-            v2.putString(MealModel.ID, mealModel.getIdMeal());
-            findNavController(this).navigate(R.id.action_ingredientDetailFragment_to_mealDetailFragment, v2);
+            mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
+            navigateToMealDetail(R.id.action_ingredientDetailFragment_to_mealDetailFragment,
+                    null,
+                    findNavController(this), isTablet);
         });
 
         mealViewModel.compositeDisposable.add(v0);
@@ -110,5 +121,9 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
                 binding.recyclerViewFilteredMeals.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void refreshMealsWhenItemToggled() {
+        mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.filterMealsByMainIngredient(ingredientViewModel.ingredient().getValue().getStrIngredient()));
     }
 }

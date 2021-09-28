@@ -34,6 +34,7 @@ public final class ResultWrapper<T> {
         return throwable;
     }
 
+
     public ViewState getViewState() {
         return viewState;
     }

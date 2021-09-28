@@ -8,6 +8,7 @@ import com.mhelrigo.foodmanual.R;
 
 public class MealModel {
     public static final String ID = "ID";
+    public static final String VIEW_HOLDER_ITEM_INDEX = "ID";
 
     private int id;
     private String idMeal;

@@ -31,12 +31,12 @@ public class MarkAllFavoriteMeal extends UseCase<Observable<MealEntity>, MarkAll
         return Observable.fromIterable(parameter.toBeMarked)
                 .subscribeOn(Schedulers.computation())
                 .concatMap(toBeMarked ->
-                Observable.fromIterable(parameter.favorites)
-                        .filter(favorite -> toBeMarked.getIdMeal().equals(favorite.getIdMeal())).map(meal -> {
-                    meal.setFavorite(true);
-                    return meal;
-                }).first(toBeMarked).toObservable()
-        );
+                        Observable.fromIterable(parameter.favorites)
+                                .filter(favorite -> toBeMarked.getIdMeal().equals(favorite.getIdMeal())).map(meal -> {
+                            toBeMarked.setFavorite(true);
+                            return toBeMarked;
+                        }).first(toBeMarked).toObservable()
+                );
     }
 
     public static final class Params {

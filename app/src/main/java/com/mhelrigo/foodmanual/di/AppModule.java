@@ -6,21 +6,20 @@ import android.content.SharedPreferences;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.mhelrigo.foodmanual.R;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
 @Module
 @InstallIn(SingletonComponent.class)
 public class AppModule {
-    @Singleton
-    @Provides
-    static RequestManager providesGlideInstance(Application application){
-        return Glide.with(application);
-    }
+    public static final String IS_TABLET = "IS_TABLET";
 
     @Singleton
     @Provides
@@ -29,7 +28,8 @@ public class AppModule {
     }
 
     @Provides
-    static FirebaseAnalytics firebaseAnalytics(Application application){
-        return FirebaseAnalytics.getInstance(application);
+    @Named(IS_TABLET)
+    Boolean isTablet(@ApplicationContext Context context) {
+        return context.getResources().getBoolean(R.bool.isTablet);
     }
 }

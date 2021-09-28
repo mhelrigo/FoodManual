@@ -32,7 +32,7 @@ import io.reactivex.disposables.Disposable;
 
 @Singleton
 @AndroidEntryPoint
-public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
+public class MealListFragment extends BaseFragment<FragmentMealListBinding> implements MealNavigator {
     private MealViewModel mealViewModel;
     private CategoryViewModel categoryViewModel;
 
@@ -66,6 +66,10 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
         handleLatestMealsData();
         handleSearchedMealsData();
         handleCategoriesData();
+
+        if (isTablet) {
+            refreshMealsWhenItemToggled();
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -112,12 +116,20 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
                 .concatMapCompletable(mealModel -> mealViewModel.toggleFavoriteOfAMeal(mealModel)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))).subscribe();
+                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))
+                        .doOnComplete(() -> {
+                            if (isTablet) {
+                                // Sync data on both screen
+                                mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
+                            }
+                        }))
+                .subscribe();
 
         Disposable v1 = mealRecyclerViewAdapter.expandDetail.subscribe(mealModel -> {
-            Bundle v2 = new Bundle();
-            v2.putString(MealModel.ID, mealModel.getIdMeal());
-            findNavController(this).navigate(R.id.action_mealListFragment_to_mealDetailFragment, v2);
+            mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
+            navigateToMealDetail(R.id.action_mealListFragment_to_mealDetailFragment,
+                    null,
+                    findNavController(this), isTablet);
         });
 
         mealViewModel.compositeDisposable.add(v0);
@@ -209,5 +221,9 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> {
                 binding.recyclerViewCategories.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    private void refreshMealsWhenItemToggled() {
+        mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.requestForLatestMeal());
     }
 }

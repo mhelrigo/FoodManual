@@ -83,7 +83,10 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
                 toggleFavorite.onNext(p0);
             });
 
-            binding.getRoot().setOnClickListener(view -> expandDetail.onNext(p0));
+            binding.getRoot().setOnClickListener(view -> {
+                p0.setViewHolderIndex(getAdapterPosition());
+                expandDetail.onNext(p0);
+            });
         }
     }
 }

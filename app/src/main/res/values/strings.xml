@@ -16,4 +16,6 @@
     <string name="enable_night_mode">Night Mode</string>
     <string name="category">Category</string>
     <string name="categories">Categories</string>
+    <string name="nothing_to_show_at_the_moment">Nothing to show at the moment Chef.</string>
+    <string name="empty_description">No details to show Chef.</string>
 </resources>

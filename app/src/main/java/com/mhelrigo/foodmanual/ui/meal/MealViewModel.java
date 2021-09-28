@@ -16,11 +16,13 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 import mhelrigo.foodmanual.domain.usecase.meal.AddFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.FilterByMainIngredient;
@@ -84,6 +86,14 @@ public class MealViewModel extends ViewModel {
         return mealsFilteredByCategory;
     }
 
+    private MutableLiveData<String> mealToBeSearched;
+
+    public LiveData<String> mealIdToBeSearched() {
+        return mealToBeSearched;
+    }
+
+    public PublishSubject<MealModel> mealThatIsToggled = PublishSubject.create();
+
     private Disposable disposableForSearchingMealByName;
 
     @Inject
@@ -116,6 +126,7 @@ public class MealViewModel extends ViewModel {
         mealsFilteredByMainIngredient = new MutableLiveData<>();
         meal = new MutableLiveData<>();
         mealsFilteredByCategory = new MutableLiveData<>();
+        mealToBeSearched = new MutableLiveData<>();
     }
 
     public void requestForLatestMeal() {
@@ -205,7 +216,10 @@ public class MealViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> meal.postValue(ResultWrapper.loading()))
-                .subscribe(mealModels -> meal.postValue(ResultWrapper.success(mealModels.get(0))),
+                .subscribe(mealModels -> {
+                            meal.postValue(ResultWrapper.success(mealModels.get(0)));
+                            Timber.e("SUCCESS : " + mealModels.get(0).getStrInstructions());
+                        },
                         throwable -> meal.postValue(ResultWrapper.error(throwable))));
     }
 
@@ -225,6 +239,10 @@ public class MealViewModel extends ViewModel {
                         throwable -> mealsFilteredByCategory.postValue(ResultWrapper.error(throwable))));
     }
 
+    public void setMealIdToBeSearched(String p0) {
+        mealToBeSearched.postValue(p0);
+    }
+
     public Completable cancelSearchByName() {
         requestForLatestMeal();
         return Completable.complete();
@@ -234,9 +252,11 @@ public class MealViewModel extends ViewModel {
         mealModel.setFavorite(!mealModel.isFavorite());
 
         if (mealModel.isFavorite()) {
-            return addFavoriteMeal.execute(AddFavoriteMeal.Params.params(mealModelMapper.transform(mealModel))).subscribeOn(Schedulers.io());
+            return addFavoriteMeal
+                    .execute(AddFavoriteMeal.Params.params(mealModelMapper.transform(mealModel))).subscribeOn(Schedulers.io());
         } else if (!mealModel.isFavorite()) {
-            return removeFavoriteMeal.execute(RemoveFavoriteMeal.Params.params(mealModelMapper.transform(mealModel))).subscribeOn(Schedulers.io());
+            return removeFavoriteMeal
+                    .execute(RemoveFavoriteMeal.Params.params(mealModelMapper.transform(mealModel))).subscribeOn(Schedulers.io());
         } else {
             throw new IllegalArgumentException();
         }

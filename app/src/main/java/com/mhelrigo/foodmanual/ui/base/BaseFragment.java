@@ -1,5 +1,7 @@
 package com.mhelrigo.foodmanual.ui.base;
 
+import static com.mhelrigo.foodmanual.di.AppModule.IS_TABLET;
+
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -19,6 +21,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 
+import com.mhelrigo.foodmanual.R;
+import com.mhelrigo.foodmanual.model.meal.MealModel;
+import com.mhelrigo.foodmanual.ui.base.exception.NotAllowedToNavigateException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
     protected B binding;
 
@@ -26,6 +35,10 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
     public abstract int layoutId();
 
     public abstract B inflateLayout(@NonNull LayoutInflater inflater);
+
+    @Inject
+    @Named(IS_TABLET)
+    public Boolean isTablet;
 
     @Nullable
     @Override

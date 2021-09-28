@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mhelrigo.foodmanual.BuildConfig;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentSettingsBinding;
 import com.mhelrigo.foodmanual.ui.base.BaseFragment;
@@ -46,6 +47,7 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
 
         setUpNightModeSwitch();
         handleNightModeSwitchChanges();
+        displayApplicationVersion();
 
         settingsViewModel.setNightMode(isNightMode(getResources().getConfiguration()));
     }
@@ -62,6 +64,13 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
         });
     }
 
+    private void displayApplicationVersion() {
+        binding.textViewVersion.setText("version: " + BuildConfig.VERSION_NAME);
+    }
+
+    /**
+     * Method that check if the system is in Dark Mode
+     * */
     private Boolean isNightMode(Configuration configuration) {
         switch (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES: {

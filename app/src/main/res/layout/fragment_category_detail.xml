@@ -20,7 +20,7 @@
             android:fontFamily="@font/roboto_thin"
             android:text="@string/category"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_20"
+            android:textSize="@dimen/base_24"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
