@@ -12,8 +12,8 @@ import android.view.View;
 
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentFavoritesBinding;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;

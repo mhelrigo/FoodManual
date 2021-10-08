@@ -5,19 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentIngredientListBinding;
-import com.mhelrigo.foodmanual.model.ingredient.IngredientModel;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 
 import javax.inject.Singleton;
 
@@ -52,8 +48,9 @@ public class IngredientListFragment extends BaseFragment<FragmentIngredientListB
 
         setUpRecyclerView();
 
-        ingredientViewModel.requestForAllIngredient();
         handleIngredientsData();
+
+        requestData();
     }
 
     private void setUpRecyclerView() {
@@ -72,9 +69,8 @@ public class IngredientListFragment extends BaseFragment<FragmentIngredientListB
 
     private void handleIngredientsData() {
         ingredientViewModel.ingredients().observe(getViewLifecycleOwner(), listResultWrapper -> {
+            processLoadingState(listResultWrapper.getViewState(), binding.imageViewLoading);
             if (listResultWrapper.getViewState().equals(ViewState.LOADING)) {
-                processLoadingState(listResultWrapper.getViewState(), binding.imageViewLoading);
-
                 binding.imageViewLoading.setVisibility(View.VISIBLE);
                 binding.textViewEmptyIngredients.setVisibility(View.GONE);
                 binding.textViewErrorForIngredients.setVisibility(View.GONE);
@@ -98,5 +94,12 @@ public class IngredientListFragment extends BaseFragment<FragmentIngredientListB
                 binding.recyclerViewIngredients.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public void requestData() {
+        if (ingredientViewModel.ingredients().getValue().noResultYet()) {
+            ingredientViewModel.requestForAllIngredient();
+        }
     }
 }

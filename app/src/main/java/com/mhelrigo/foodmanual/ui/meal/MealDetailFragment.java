@@ -4,22 +4,18 @@ import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealDetailBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
-
-import javax.inject.Inject;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -48,7 +44,6 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
         super.onViewCreated(view, savedInstanceState);
         mealViewModel = new ViewModelProvider(getActivity()).get(MealViewModel.class);
 
-        requestForExpandedMealDetail();
         handleMealData();
     }
 
@@ -59,6 +54,7 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
 
     private void handleMealData() {
         mealViewModel.meal().observe(getViewLifecycleOwner(), mealModelResultWrapper -> {
+            Timber.e("handleMealData : " + mealModelResultWrapper.getViewState());
             if (mealModelResultWrapper.getViewState().equals(ViewState.LOADING)) {
                 processLoadingState(mealModelResultWrapper.getViewState(), binding.imageViewLoading);
 
@@ -99,7 +95,7 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
                                     requestForExpandedMealDetail();
                                     refreshDataIfDeviceIsTablet(mealModel);
                                 }).subscribe()));
-            } else {
+            } else if (mealModelResultWrapper.getViewState().equals(ViewState.ERROR)) {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.constraintLayoutRootSuccess.setVisibility(View.GONE);
                 binding.textViewEmptyMeals.setVisibility(View.GONE);
@@ -111,7 +107,7 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
 
     /**
      * Called to update the list of Meals on the left side of screen.
-     * */
+     */
     private void refreshDataIfDeviceIsTablet(MealModel p0) {
         if (isTablet) {
             // For non-favorite screen
@@ -119,6 +115,13 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
 
             // For favorites screen
             mealViewModel.requestForFavoriteMeals();
+        }
+    }
+
+    @Override
+    public void requestData() {
+        if (mealViewModel.meal().getValue().noResultYet()) {
+            requestForExpandedMealDetail();
         }
     }
 }

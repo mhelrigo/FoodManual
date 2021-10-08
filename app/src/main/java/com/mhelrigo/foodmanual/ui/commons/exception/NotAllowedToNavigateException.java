@@ -1,4 +1,4 @@
-package com.mhelrigo.foodmanual.ui.base.exception;
+package com.mhelrigo.foodmanual.ui.commons.exception;
 
 /**
  * This exception class is cheap enough to be used regularly

@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.mhelrigo.foodmanual.mapper.IngredientModelMapper;
 import com.mhelrigo.foodmanual.model.ingredient.IngredientModel;
-import com.mhelrigo.foodmanual.ui.base.ResultWrapper;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewStateWrapper;
 
 import java.util.List;
 
@@ -27,9 +26,9 @@ public class IngredientViewModel extends ViewModel {
 
     public CompositeDisposable compositeDisposable;
 
-    private MutableLiveData<ResultWrapper<List<IngredientModel>>> ingredients;
+    private MutableLiveData<ViewStateWrapper<List<IngredientModel>>> ingredients;
 
-    public LiveData<ResultWrapper<List<IngredientModel>>> ingredients() {
+    public LiveData<ViewStateWrapper<List<IngredientModel>>> ingredients() {
         return ingredients;
     }
 
@@ -46,7 +45,7 @@ public class IngredientViewModel extends ViewModel {
 
         compositeDisposable = new CompositeDisposable();
 
-        ingredients = new MutableLiveData<>();
+        ingredients = new MutableLiveData<>(ViewStateWrapper.loading());
         ingredient = new MutableLiveData<>();
     }
 
@@ -57,11 +56,11 @@ public class IngredientViewModel extends ViewModel {
                 .map(ingredientEntity -> ingredientModelMapper.transform(ingredientEntity))
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> ingredients.postValue(ResultWrapper.loading()))
+                .doOnSubscribe(disposable -> ingredients.postValue(ViewStateWrapper.loading()))
                 .subscribe(ingredientModels -> {
-                    ingredients.postValue(ResultWrapper.success(ingredientModels));
+                    ingredients.postValue(ViewStateWrapper.success(ingredientModels));
                 }, throwable -> {
-                    ingredients.postValue(ResultWrapper.error(throwable));
+                    ingredients.postValue(ViewStateWrapper.error(throwable));
                 }));
     }
 

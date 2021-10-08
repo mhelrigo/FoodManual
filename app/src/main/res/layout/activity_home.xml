@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.HomeActivity">
 
+    <LinearLayout
+        android:id="@+id/linearLayoutNoInternetConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red_A700"
+        android:gravity="center"
+        android:padding="@dimen/base_4"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="No internet connection"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base_8" />
+    </LinearLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerViewHome"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -14,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutNoInternetConnection"
         app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

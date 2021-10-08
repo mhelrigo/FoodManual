@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
 import mhelrigo.foodmanual.data.mapper.MealMapper;
 import mhelrigo.foodmanual.data.repository.meal.local.MealDao;
 import mhelrigo.foodmanual.data.repository.meal.remote.MealApi;
@@ -31,6 +32,7 @@ public class MealRepositoryImpl implements MealRepository {
     @Override
     public Single<MealsEntity> getLatest() {
         return mealApi.getLatest()
+                .doOnError(throwable -> throwable.printStackTrace())
                 .map(mealsApiEntity -> mealMapper.transform(mealsApiEntity));
     }
 

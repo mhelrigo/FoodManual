@@ -13,10 +13,9 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentIngredientDetailBinding;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.meal.MealDetailFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
 import com.mhelrigo.foodmanual.ui.meal.MealNavigator;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 import com.mhelrigo.foodmanual.ui.meal.MealRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.meal.MealViewModel;
 
@@ -53,8 +52,9 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
 
         setUpRecyclerView();
 
-        handleIngredientData();
         handleFilteredMeals();
+        handleIngredientData();
+        requestData();
 
         if (isTablet) {
             refreshMealsWhenItemToggled();
@@ -101,8 +101,6 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
 
             binding.textViewDescription.setText(ingredientModel.getStrDescription());
             Glide.with(getContext()).load(ingredientModel.thumbnail()).into(binding.imageViewThumbnail);
-
-            mealViewModel.filterMealsByMainIngredient(ingredientModel.getStrIngredient());
         });
     }
 
@@ -125,5 +123,10 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
 
     private void refreshMealsWhenItemToggled() {
         mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.filterMealsByMainIngredient(ingredientViewModel.ingredient().getValue().getStrIngredient()));
+    }
+
+    @Override
+    public void requestData() {
+        mealViewModel.filterMealsByMainIngredient(ingredientViewModel.ingredient().getValue().getStrIngredient());
     }
 }

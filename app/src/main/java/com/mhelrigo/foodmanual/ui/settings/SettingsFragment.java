@@ -8,12 +8,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.mhelrigo.foodmanual.BuildConfig;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentSettingsBinding;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 

@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModel;
 
 import com.mhelrigo.foodmanual.mapper.MealModelMapper;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.base.ResultWrapper;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewStateWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,7 +33,6 @@ import mhelrigo.foodmanual.domain.usecase.meal.GetMealDetails;
 import mhelrigo.foodmanual.domain.usecase.meal.MarkAllFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.RemoveFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.SearchMealByName;
-import timber.log.Timber;
 
 @HiltViewModel
 public class MealViewModel extends ViewModel {
@@ -50,39 +49,39 @@ public class MealViewModel extends ViewModel {
 
     public CompositeDisposable compositeDisposable;
 
-    private MutableLiveData<ResultWrapper<List<MealModel>>> latestMeals;
+    private MutableLiveData<ViewStateWrapper<List<MealModel>>> latestMeals;
 
-    public LiveData<ResultWrapper<List<MealModel>>> latestMeals() {
+    public LiveData<ViewStateWrapper<List<MealModel>>> latestMeals() {
         return latestMeals;
     }
 
-    private MutableLiveData<ResultWrapper<List<MealModel>>> searchedMeals;
+    private MutableLiveData<ViewStateWrapper<List<MealModel>>> searchedMeals;
 
-    public LiveData<ResultWrapper<List<MealModel>>> searchedMeals() {
+    public LiveData<ViewStateWrapper<List<MealModel>>> searchedMeals() {
         return searchedMeals;
     }
 
-    private MutableLiveData<ResultWrapper<List<MealModel>>> favoriteMeals;
+    private MutableLiveData<ViewStateWrapper<List<MealModel>>> favoriteMeals;
 
-    public LiveData<ResultWrapper<List<MealModel>>> favoriteMeals() {
+    public LiveData<ViewStateWrapper<List<MealModel>>> favoriteMeals() {
         return favoriteMeals;
     }
 
-    private MutableLiveData<ResultWrapper<List<MealModel>>> mealsFilteredByMainIngredient;
+    private MutableLiveData<ViewStateWrapper<List<MealModel>>> mealsFilteredByMainIngredient;
 
-    public LiveData<ResultWrapper<List<MealModel>>> mealsFilteredByMainIngredient() {
+    public LiveData<ViewStateWrapper<List<MealModel>>> mealsFilteredByMainIngredient() {
         return mealsFilteredByMainIngredient;
     }
 
-    private MutableLiveData<ResultWrapper<MealModel>> meal;
+    private MutableLiveData<ViewStateWrapper<MealModel>> meal;
 
-    public LiveData<ResultWrapper<MealModel>> meal() {
+    public LiveData<ViewStateWrapper<MealModel>> meal() {
         return meal;
     }
 
-    private MutableLiveData<ResultWrapper<List<MealModel>>> mealsFilteredByCategory;
+    private MutableLiveData<ViewStateWrapper<List<MealModel>>> mealsFilteredByCategory;
 
-    public LiveData<ResultWrapper<List<MealModel>>> mealsFilteredByCategory() {
+    public LiveData<ViewStateWrapper<List<MealModel>>> mealsFilteredByCategory() {
         return mealsFilteredByCategory;
     }
 
@@ -120,12 +119,12 @@ public class MealViewModel extends ViewModel {
 
         compositeDisposable = new CompositeDisposable();
 
-        latestMeals = new MutableLiveData<>();
-        searchedMeals = new MutableLiveData<>();
-        favoriteMeals = new MutableLiveData<>();
-        mealsFilteredByMainIngredient = new MutableLiveData<>();
-        meal = new MutableLiveData<>();
-        mealsFilteredByCategory = new MutableLiveData<>();
+        latestMeals = new MutableLiveData<>(ViewStateWrapper.loading());
+        searchedMeals = new MutableLiveData<>(ViewStateWrapper.success(new ArrayList<>()));
+        favoriteMeals = new MutableLiveData<>(ViewStateWrapper.loading());
+        mealsFilteredByMainIngredient = new MutableLiveData<>(ViewStateWrapper.loading());
+        meal = new MutableLiveData<>(ViewStateWrapper.init());
+        mealsFilteredByCategory = new MutableLiveData<>(ViewStateWrapper.loading());
         mealToBeSearched = new MutableLiveData<>();
     }
 
@@ -140,9 +139,9 @@ public class MealViewModel extends ViewModel {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> latestMeals.postValue(ResultWrapper.loading()))
-                .subscribe(mealModels -> latestMeals.postValue(ResultWrapper.success(mealModels)),
-                        throwable -> latestMeals.postValue(ResultWrapper.error(throwable))));
+                .doOnSubscribe(disposable -> latestMeals.postValue(ViewStateWrapper.loading()))
+                .subscribe(mealModels -> latestMeals.postValue(ViewStateWrapper.success(mealModels)),
+                        throwable -> latestMeals.postValue(ViewStateWrapper.error(throwable))));
     }
 
     public void requestForFavoriteMeals() {
@@ -152,11 +151,11 @@ public class MealViewModel extends ViewModel {
                 .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> favoriteMeals.postValue(ResultWrapper.loading()))
+                .doOnSubscribe(disposable -> favoriteMeals.postValue(ViewStateWrapper.loading()))
                 .subscribe(mealModels -> {
-                    favoriteMeals.postValue(ResultWrapper.success(mealModels));
+                    favoriteMeals.postValue(ViewStateWrapper.success(mealModels));
                 }, throwable -> {
-                    favoriteMeals.postValue(ResultWrapper.error(throwable));
+                    favoriteMeals.postValue(ViewStateWrapper.error(throwable));
                 }));
     }
 
@@ -181,9 +180,9 @@ public class MealViewModel extends ViewModel {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> searchedMeals.postValue(ResultWrapper.loading()))
-                .subscribe(mealModels -> searchedMeals.postValue(ResultWrapper.success(mealModels)),
-                        throwable -> searchedMeals.postValue(ResultWrapper.error(throwable)));
+                .doOnSubscribe(disposable -> searchedMeals.postValue(ViewStateWrapper.loading()))
+                .subscribe(mealModels -> searchedMeals.postValue(ViewStateWrapper.success(mealModels)),
+                        throwable -> searchedMeals.postValue(ViewStateWrapper.error(throwable)));
 
         compositeDisposable.add(disposableForSearchingMealByName);
     }
@@ -199,9 +198,9 @@ public class MealViewModel extends ViewModel {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> mealsFilteredByMainIngredient.postValue(ResultWrapper.loading()))
-                .subscribe(mealModels -> mealsFilteredByMainIngredient.postValue(ResultWrapper.success(mealModels)),
-                        throwable -> mealsFilteredByMainIngredient.postValue(ResultWrapper.error(throwable))));
+                .doOnSubscribe(disposable -> mealsFilteredByMainIngredient.postValue(ViewStateWrapper.loading()))
+                .subscribe(mealModels -> mealsFilteredByMainIngredient.postValue(ViewStateWrapper.success(mealModels)),
+                        throwable -> mealsFilteredByMainIngredient.postValue(ViewStateWrapper.error(throwable))));
     }
 
     public void requestForExpandedMealDetail(String p0) {
@@ -215,12 +214,11 @@ public class MealViewModel extends ViewModel {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> meal.postValue(ResultWrapper.loading()))
+                .doOnSubscribe(disposable -> meal.postValue(ViewStateWrapper.loading()))
                 .subscribe(mealModels -> {
-                            meal.postValue(ResultWrapper.success(mealModels.get(0)));
-                            Timber.e("SUCCESS : " + mealModels.get(0).getStrInstructions());
+                            meal.postValue(ViewStateWrapper.success(mealModels.get(0)));
                         },
-                        throwable -> meal.postValue(ResultWrapper.error(throwable))));
+                        throwable -> meal.postValue(ViewStateWrapper.error(throwable))));
     }
 
     public void filterMealsByCategory(String p0) {
@@ -234,9 +232,9 @@ public class MealViewModel extends ViewModel {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> mealsFilteredByCategory.postValue(ResultWrapper.loading()))
-                .subscribe(mealModels -> mealsFilteredByCategory.postValue(ResultWrapper.success(mealModels)),
-                        throwable -> mealsFilteredByCategory.postValue(ResultWrapper.error(throwable))));
+                .doOnSubscribe(disposable -> mealsFilteredByCategory.postValue(ViewStateWrapper.loading()))
+                .subscribe(mealModels -> mealsFilteredByCategory.postValue(ViewStateWrapper.success(mealModels)),
+                        throwable -> mealsFilteredByCategory.postValue(ViewStateWrapper.error(throwable))));
     }
 
     public void setMealIdToBeSearched(String p0) {

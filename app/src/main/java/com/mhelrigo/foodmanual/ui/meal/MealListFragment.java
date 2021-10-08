@@ -17,8 +17,8 @@ import android.view.View;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentMealListBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 import com.mhelrigo.foodmanual.ui.category.CategoryRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.category.CategoryViewModel;
 
@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @Singleton
 @AndroidEntryPoint
@@ -38,6 +39,8 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
     private MealRecyclerViewAdapter mealRecyclerViewAdapter;
     private CategoryRecyclerViewAdapter categoryRecyclerViewAdapter;
+
+    private CharSequence searchedDrinkTemp = "";
 
     public MealListFragment() {
         // Required empty public constructor
@@ -63,9 +66,11 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
         setUpLatestMealsRecyclerView();
         setUpCategoriesRecyclerView();
 
-        handleLatestMealsData();
         handleSearchedMealsData();
+        handleLatestMealsData();
         handleCategoriesData();
+
+        requestData();
 
         if (isTablet) {
             refreshMealsWhenItemToggled();
@@ -82,6 +87,7 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                searchedDrinkTemp = charSequence;
                 mealViewModel.searchForMealsByName(charSequence);
             }
 
@@ -156,8 +162,8 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
     }
 
     private void handleLatestMealsData() {
-        mealViewModel.requestForLatestMeal();
         mealViewModel.latestMeals().observe(getViewLifecycleOwner(), mealModels -> {
+            Timber.e("mealModels : " + mealModels.getViewState());
             if (mealModels.getViewState().equals(ViewState.LOADING)) {
                 requestingForMealsUiSetup(mealModels.getViewState());
             } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
@@ -170,6 +176,7 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
     private void handleSearchedMealsData() {
         mealViewModel.searchedMeals().observe(getViewLifecycleOwner(), mealModels -> {
+            Timber.e("mealModels : " + mealModels.getViewState());
             if (mealModels.getViewState().equals(ViewState.LOADING)) {
                 requestingForMealsUiSetup(mealModels.getViewState());
             } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
@@ -210,7 +217,6 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
     }
 
     private void handleCategoriesData() {
-        categoryViewModel.requestForCategories();
         categoryViewModel.categories().observe(getViewLifecycleOwner(), listResultWrapper -> {
             if (listResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
                 categoryRecyclerViewAdapter.categories.submitList(listResultWrapper.getResult());
@@ -225,5 +231,16 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
     private void refreshMealsWhenItemToggled() {
         mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.requestForLatestMeal());
+    }
+
+    @Override
+    public void requestData() {
+        if (mealViewModel.latestMeals().getValue().noResultYet()) {
+            mealViewModel.requestForLatestMeal();
+        }
+
+        if (categoryViewModel.categories().getValue().noResultYet()) {
+            categoryViewModel.requestForCategories();
+        }
     }
 }

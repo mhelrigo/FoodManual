@@ -1,12 +1,12 @@
 package com.mhelrigo.foodmanual.ui.meal;
 
-import static com.mhelrigo.foodmanual.ui.base.exception.NotAllowedToNavigateException.checkIfAllowedToNavigate;
+import static com.mhelrigo.foodmanual.ui.commons.exception.NotAllowedToNavigateException.checkIfAllowedToNavigate;
 
 import android.os.Bundle;
 
 import androidx.navigation.NavController;
 
-import com.mhelrigo.foodmanual.ui.base.exception.NotAllowedToNavigateException;
+import com.mhelrigo.foodmanual.ui.commons.exception.NotAllowedToNavigateException;
 
 import javax.annotation.Nullable;
 

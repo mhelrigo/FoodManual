@@ -6,16 +6,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.bumptech.glide.manager.ConnectivityMonitor;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.ActivityHomeBinding;
 import com.mhelrigo.foodmanual.ui.meal.MealDetailFragment;
@@ -26,12 +34,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
     private ActivityHomeBinding binding;
     private SettingsViewModel settingsViewModel;
-    private MealViewModel mealViewModel;
 
     @Inject
     @Named(IS_TABLET)
@@ -44,12 +52,24 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-        mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
 
         setUpBottomNavigation();
         handleNightModeSwitchChanges();
+        handleInternetConnectionChanges();
 
         setUpViewForFragment(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerConnectivityListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unRegisterConnectivityListener();
     }
 
     private void setUpViewForFragment(Bundle p0) {
@@ -78,4 +98,32 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
     }
+
+    private void handleInternetConnectionChanges() {
+        settingsViewModel.isNetworkAvailable().observe(this, isNetworkAvailable -> {
+            if (isNetworkAvailable) {
+                binding.linearLayoutNoInternetConnection.setVisibility(View.GONE);
+            } else {
+                binding.linearLayoutNoInternetConnection.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void registerConnectivityListener() {
+        registerReceiver(connectivityListener, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    private void unRegisterConnectivityListener() {
+        unregisterReceiver(connectivityListener);
+    }
+
+    private BroadcastReceiver connectivityListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+            settingsViewModel.setIsNetworkAvailable(networkInfo != null && networkInfo.isConnectedOrConnecting());
+        }
+    };
 }

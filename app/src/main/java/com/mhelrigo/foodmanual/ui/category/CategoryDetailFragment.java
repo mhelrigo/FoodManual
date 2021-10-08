@@ -13,10 +13,9 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.mhelrigo.foodmanual.R;
 import com.mhelrigo.foodmanual.databinding.FragmentCategoryDetailBinding;
-import com.mhelrigo.foodmanual.ui.base.BaseFragment;
-import com.mhelrigo.foodmanual.ui.meal.MealDetailFragment;
+import com.mhelrigo.foodmanual.ui.commons.base.BaseFragment;
 import com.mhelrigo.foodmanual.ui.meal.MealNavigator;
-import com.mhelrigo.foodmanual.ui.base.ViewState;
+import com.mhelrigo.foodmanual.ui.commons.base.ViewState;
 import com.mhelrigo.foodmanual.ui.meal.MealRecyclerViewAdapter;
 import com.mhelrigo.foodmanual.ui.meal.MealViewModel;
 

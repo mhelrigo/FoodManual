@@ -1,4 +1,4 @@
-package com.mhelrigo.foodmanual.ui.base;
+package com.mhelrigo.foodmanual.ui.commons.base;
 
 import static com.mhelrigo.foodmanual.di.AppModule.IS_TABLET;
 
@@ -13,22 +13,19 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewbinding.ViewBinding;
-import androidx.viewbinding.ViewBindings;
 
-import com.mhelrigo.foodmanual.R;
-import com.mhelrigo.foodmanual.model.meal.MealModel;
-import com.mhelrigo.foodmanual.ui.base.exception.NotAllowedToNavigateException;
+import com.mhelrigo.foodmanual.ui.settings.SettingsViewModel;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
+public abstract class BaseFragment<B extends ViewBinding> extends Fragment implements DataRequestManager {
     protected B binding;
 
     @LayoutRes
@@ -40,10 +37,14 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
     @Named(IS_TABLET)
     public Boolean isTablet;
 
+    private SettingsViewModel settingsViewModel;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = inflateLayout(inflater);
+
+        settingsViewModel = new ViewModelProvider(getActivity()).get(SettingsViewModel.class);
 
         return binding.getRoot();
     }
@@ -51,7 +52,9 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
         setUpDeviceBackNavigation(this);
+        handleInternetConnectivityChanges();
     }
 
     public NavController findNavController(@NonNull Fragment fragment) {
@@ -77,5 +80,13 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment {
         } else {
             objectAnimator.cancel();
         }
+    }
+
+    private void handleInternetConnectivityChanges() {
+        settingsViewModel.isNetworkAvailable().observe(getViewLifecycleOwner(), isNetworkAvailable -> {
+            if (isNetworkAvailable) {
+                requestData();
+            }
+        });
     }
 }
