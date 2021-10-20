@@ -51,14 +51,11 @@ public class CategoryDetailFragment extends BaseFragment<FragmentCategoryDetailB
         categoryViewModel = new ViewModelProvider(getActivity()).get(CategoryViewModel.class);
         mealViewModel = new ViewModelProvider(getActivity()).get(MealViewModel.class);
 
+
         setUpRecyclerView();
 
         handleCategoryData();
         handleFilteredMeals();
-
-        if (isTablet) {
-            refreshMealsWhenItemToggled();
-        }
     }
 
     private void setUpRecyclerView() {
@@ -117,16 +114,12 @@ public class CategoryDetailFragment extends BaseFragment<FragmentCategoryDetailB
             } else if (listResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.recyclerViewFilteredMeals.setVisibility(View.VISIBLE);
-                mealRecyclerViewAdapter.meals.submitList(listResultWrapper.getResult());
+                mealRecyclerViewAdapter.submitList(listResultWrapper.getResult());
             } else {
 
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.recyclerViewFilteredMeals.setVisibility(View.GONE);
             }
         });
-    }
-
-    private void refreshMealsWhenItemToggled() {
-        mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.filterMealsByCategory(categoryViewModel.category().getValue().getStrCategory()));
     }
 }

@@ -21,6 +21,8 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
@@ -31,11 +33,15 @@ import mhelrigo.foodmanual.domain.usecase.meal.GetAllFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.GetLatestMeals;
 import mhelrigo.foodmanual.domain.usecase.meal.GetMealDetails;
 import mhelrigo.foodmanual.domain.usecase.meal.MarkAllFavoriteMeal;
+import mhelrigo.foodmanual.domain.usecase.meal.MarkFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.RemoveFavoriteMeal;
 import mhelrigo.foodmanual.domain.usecase.meal.SearchMealByName;
+import timber.log.Timber;
 
 @HiltViewModel
-public class MealViewModel extends ViewModel {
+public class MealViewModel extends ViewModel implements SyncMeals {
+    public static final int SYNC_MEALS_DEFAULT_INDEX = -1;
+
     private GetLatestMeals getLatestMeals;
     private GetAllFavoriteMeal getAllFavoriteMeal;
     private MarkAllFavoriteMeal markAllFavoriteMeal;
@@ -45,6 +51,7 @@ public class MealViewModel extends ViewModel {
     private FilterByMainIngredient filterByMainIngredient;
     private GetMealDetails getMealDetails;
     private FilterMealByCategory filterMealByCategory;
+    private MarkFavoriteMeal markFavoriteMeal;
     private MealModelMapper mealModelMapper;
 
     public CompositeDisposable compositeDisposable;
@@ -91,8 +98,6 @@ public class MealViewModel extends ViewModel {
         return mealToBeSearched;
     }
 
-    public PublishSubject<MealModel> mealThatIsToggled = PublishSubject.create();
-
     private Disposable disposableForSearchingMealByName;
 
     @Inject
@@ -105,6 +110,7 @@ public class MealViewModel extends ViewModel {
                          FilterByMainIngredient filterByMainIngredient,
                          GetMealDetails getMealDetails,
                          FilterMealByCategory filterMealByCategory,
+                         MarkFavoriteMeal markFavoriteMeal,
                          MealModelMapper mealModelMapper) {
         this.getLatestMeals = getLatestMeals;
         this.getAllFavoriteMeal = getAllFavoriteMeal;
@@ -115,6 +121,7 @@ public class MealViewModel extends ViewModel {
         this.filterByMainIngredient = filterByMainIngredient;
         this.getMealDetails = getMealDetails;
         this.filterMealByCategory = filterMealByCategory;
+        this.markFavoriteMeal = markFavoriteMeal;
         this.mealModelMapper = mealModelMapper;
 
         compositeDisposable = new CompositeDisposable();
@@ -257,6 +264,22 @@ public class MealViewModel extends ViewModel {
                     .execute(RemoveFavoriteMeal.Params.params(mealModelMapper.transform(mealModel))).subscribeOn(Schedulers.io());
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public void syncMeals(MealModel p0, int index) {
+        List<MutableLiveData<ViewStateWrapper<List<MealModel>>>> v0 = new ArrayList<>();
+        v0.add(mealsFilteredByMainIngredient);
+        v0.add(latestMeals);
+        v0.add(searchedMeals);
+        v0.add(mealsFilteredByCategory);
+
+        if (v0.size() - 1 > index) {
+            index++;
+            int v1 = index;
+            compositeDisposable.add(sync(p0, v0, index, markFavoriteMeal, mealModelMapper).subscribe(() -> {
+                syncMeals(p0, v1);
+            }, throwable -> syncMeals(p0, v1)));
         }
     }
 

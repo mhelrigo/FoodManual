@@ -1,5 +1,6 @@
 package com.mhelrigo.foodmanual.ui.meal;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mhelrigo.foodmanual.databinding.ItemMealBinding;
 import com.mhelrigo.foodmanual.model.meal.MealModel;
 
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerViewAdapter.ViewHolder> {
     private DiffUtil.ItemCallback<MealModel> itemCallback = new DiffUtil.ItemCallback<MealModel>() {
@@ -27,12 +31,11 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
 
         @Override
         public boolean areContentsTheSame(@NonNull MealModel oldItem, @NonNull MealModel newItem) {
-            return Integer.parseInt(oldItem.getIdMeal()) == Integer.parseInt(newItem.getIdMeal()) &&
-                    oldItem.isFavorite() == newItem.isFavorite();
+            return oldItem.equals(newItem);
         }
     };
 
-    public AsyncListDiffer<MealModel> meals = new AsyncListDiffer<MealModel>(this, itemCallback);
+    private AsyncListDiffer<MealModel> meals = new AsyncListDiffer<MealModel>(this, itemCallback);
 
     public PublishSubject<MealModel> toggleFavorite = PublishSubject.create();
 
@@ -43,6 +46,10 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
         notifyItemChanged(p0.getViewHolderIndex());
 
         return Completable.complete();
+    }
+
+    public void submitList(List<MealModel> p0) {
+        meals.submitList(p0);
     }
 
     @NonNull

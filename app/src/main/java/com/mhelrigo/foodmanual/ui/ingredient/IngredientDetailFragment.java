@@ -55,10 +55,6 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
         handleFilteredMeals();
         handleIngredientData();
         requestData();
-
-        if (isTablet) {
-            refreshMealsWhenItemToggled();
-        }
     }
 
     private void setUpRecyclerView() {
@@ -113,16 +109,12 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
             } else if (listResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.recyclerViewFilteredMeals.setVisibility(View.VISIBLE);
-                mealRecyclerViewAdapter.meals.submitList(listResultWrapper.getResult());
+                mealRecyclerViewAdapter.submitList(listResultWrapper.getResult());
             } else {
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.recyclerViewFilteredMeals.setVisibility(View.GONE);
             }
         });
-    }
-
-    private void refreshMealsWhenItemToggled() {
-        mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.filterMealsByMainIngredient(ingredientViewModel.ingredient().getValue().getStrIngredient()));
     }
 
     @Override

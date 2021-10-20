@@ -58,6 +58,8 @@ public class HomeActivity extends AppCompatActivity {
         handleInternetConnectionChanges();
 
         setUpViewForFragment(savedInstanceState);
+
+        settingsViewModel.requestForSettings();
     }
 
     @Override

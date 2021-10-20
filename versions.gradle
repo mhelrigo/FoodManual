@@ -95,8 +95,8 @@ def buildVersions = [:]
 buildVersions.compileSdkVersion = 30
 buildVersions.minSdkVersion = 23
 buildVersions.targetSdkVersion = 30
-buildVersions.versionCode = 6
-buildVersions.versionName = "2.0.0"
+buildVersions.versionCode = 8
+buildVersions.versionName = "2.0.2"
 
 def addRepositories(RepositoryHandler handler) {
     handler.google()

@@ -24,7 +24,7 @@ public class AppModule {
     @Singleton
     @Provides
     static SharedPreferences sharedPreferences(Application application){
-        return application.getSharedPreferences("com.mhelrigo.foodmanual.di", Context.MODE_PRIVATE);
+        return application.getSharedPreferences("com.mhelrigo.foodmanual.sharedPreferences", Context.MODE_PRIVATE);
     }
 
     @Provides

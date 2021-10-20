@@ -95,7 +95,7 @@ public class FavoritesFragment extends BaseFragment<FragmentFavoritesBinding> im
                 binding.textViewEmptyMeals.setVisibility(View.GONE);
                 binding.textViewErrorForMeals.setVisibility(View.GONE);
 
-                mealRecyclerViewAdapter.meals.submitList(mealModels.getResult());
+                mealRecyclerViewAdapter.submitList(mealModels.getResult());
 
                 if (mealModels.getResult() == null || mealModels.getResult().isEmpty()) {
                     binding.textViewEmptyMeals.setVisibility(View.VISIBLE);

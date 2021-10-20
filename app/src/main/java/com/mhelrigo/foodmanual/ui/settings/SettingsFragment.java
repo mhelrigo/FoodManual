@@ -47,8 +47,6 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
         setUpNightModeSwitch();
         handleNightModeSwitchChanges();
         displayApplicationVersion();
-
-        settingsViewModel.setNightMode(isNightMode(getResources().getConfiguration()));
     }
 
     private void setUpNightModeSwitch() {
@@ -69,7 +67,7 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
 
     /**
      * Method that check if the system is in Dark Mode
-     * */
+     */
     private Boolean isNightMode(Configuration configuration) {
         switch (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES: {

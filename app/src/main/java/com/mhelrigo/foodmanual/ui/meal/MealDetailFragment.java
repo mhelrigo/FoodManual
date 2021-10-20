@@ -54,7 +54,6 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
 
     private void handleMealData() {
         mealViewModel.meal().observe(getViewLifecycleOwner(), mealModelResultWrapper -> {
-            Timber.e("handleMealData : " + mealModelResultWrapper.getViewState());
             if (mealModelResultWrapper.getViewState().equals(ViewState.LOADING)) {
                 processLoadingState(mealModelResultWrapper.getViewState(), binding.imageViewLoading);
 
@@ -65,6 +64,7 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
                 binding.textViewErrorForMeals.setVisibility(View.GONE);
             } else if (mealModelResultWrapper.getViewState().equals(ViewState.SUCCESS)) {
                 MealModel mealModel = mealModelResultWrapper.getResult();
+                Timber.e("mealModel : " + mealModel.getIdMeal());
 
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.constraintLayoutRootSuccess.setVisibility(View.VISIBLE);
@@ -92,8 +92,9 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
                         .setOnClickListener(view -> mealViewModel.compositeDisposable.add(mealViewModel.toggleFavoriteOfAMeal(mealModel)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnComplete(() -> {
-                                    requestForExpandedMealDetail();
-                                    refreshDataIfDeviceIsTablet(mealModel);
+                                    mealViewModel.syncMeals(mealModel, MealViewModel.SYNC_MEALS_DEFAULT_INDEX);
+                                    mealViewModel.requestForFavoriteMeals();
+                                    mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
                                 }).subscribe()));
             } else if (mealModelResultWrapper.getViewState().equals(ViewState.ERROR)) {
                 binding.imageViewLoading.setVisibility(View.GONE);
@@ -105,23 +106,8 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
         });
     }
 
-    /**
-     * Called to update the list of Meals on the left side of screen.
-     */
-    private void refreshDataIfDeviceIsTablet(MealModel p0) {
-        if (isTablet) {
-            // For non-favorite screen
-            mealViewModel.mealThatIsToggled.onNext(p0);
-
-            // For favorites screen
-            mealViewModel.requestForFavoriteMeals();
-        }
-    }
-
     @Override
     public void requestData() {
-        if (mealViewModel.meal().getValue().noResultYet()) {
-            requestForExpandedMealDetail();
-        }
+        requestForExpandedMealDetail();
     }
 }

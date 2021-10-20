@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import timber.log.Timber;
 
 @Singleton
 @AndroidEntryPoint
@@ -69,12 +68,6 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
         handleSearchedMealsData();
         handleLatestMealsData();
         handleCategoriesData();
-
-        requestData();
-
-        if (isTablet) {
-            refreshMealsWhenItemToggled();
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -163,7 +156,6 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
     private void handleLatestMealsData() {
         mealViewModel.latestMeals().observe(getViewLifecycleOwner(), mealModels -> {
-            Timber.e("mealModels : " + mealModels.getViewState());
             if (mealModels.getViewState().equals(ViewState.LOADING)) {
                 requestingForMealsUiSetup(mealModels.getViewState());
             } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
@@ -176,7 +168,6 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
 
     private void handleSearchedMealsData() {
         mealViewModel.searchedMeals().observe(getViewLifecycleOwner(), mealModels -> {
-            Timber.e("mealModels : " + mealModels.getViewState());
             if (mealModels.getViewState().equals(ViewState.LOADING)) {
                 requestingForMealsUiSetup(mealModels.getViewState());
             } else if (mealModels.getViewState().equals(ViewState.SUCCESS)) {
@@ -201,7 +192,7 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
         binding.textViewEmptyMeals.setVisibility(View.GONE);
         binding.textViewErrorForMeals.setVisibility(View.GONE);
 
-        mealRecyclerViewAdapter.meals.submitList(p0);
+        mealRecyclerViewAdapter.submitList(p0);
 
         if (p0 == null || p0.isEmpty()) {
             binding.textViewEmptyMeals.setVisibility(View.VISIBLE);
@@ -227,10 +218,6 @@ public class MealListFragment extends BaseFragment<FragmentMealListBinding> impl
                 binding.recyclerViewCategories.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    private void refreshMealsWhenItemToggled() {
-        mealViewModel.mealThatIsToggled.subscribe(mealModel -> mealViewModel.requestForLatestMeal());
     }
 
     @Override

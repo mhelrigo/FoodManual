@@ -52,7 +52,7 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment imple
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         setUpDeviceBackNavigation(this);
         handleInternetConnectivityChanges();
     }
@@ -65,7 +65,9 @@ public abstract class BaseFragment<B extends ViewBinding> extends Fragment imple
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                findNavController(fragment).popBackStack();
+                if (!findNavController(fragment).popBackStack()) {
+                    requireActivity().finish();
+                }
             }
         });
     }

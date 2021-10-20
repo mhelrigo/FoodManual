@@ -2,11 +2,14 @@ package com.mhelrigo.foodmanual.model.meal;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.room.Ignore;
 
 import com.mhelrigo.foodmanual.R;
 
-public class MealModel {
+import timber.log.Timber;
+
+public class MealModel implements Cloneable {
     public static final String ID = "ID";
     public static final String VIEW_HOLDER_ITEM_INDEX = "ID";
 
@@ -403,11 +406,11 @@ public class MealModel {
         return viewHolderIndex;
     }
 
-    public static boolean checkIfMeasurementIsEmpty(String measurement){
+    public static boolean checkIfMeasurementIsEmpty(String measurement) {
         return measurement == null || measurement.equals("") || measurement.equals(" ");
     }
 
-    public static boolean checkIfIngredientIsEmpty(String ingredient){
+    public static boolean checkIfIngredientIsEmpty(String ingredient) {
         return ingredient == null || ingredient.equals("") || ingredient.equals(" ");
     }
 
@@ -447,17 +450,16 @@ public class MealModel {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof MealModel)) {
-            Log.e("equals", "equals");
             return false;
         }
 
         MealModel mealModel = (MealModel) o;
-        Log.e("equals", "not equals");
-        return idMeal.equals(mealModel.idMeal);
+        return idMeal.equals(mealModel.idMeal) && isFavorite == mealModel.isFavorite;
     }
 
+    @NonNull
     @Override
-    public int hashCode() {
-        return Integer.parseInt(idMeal);
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

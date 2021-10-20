@@ -2,12 +2,14 @@ package com.mhelrigo.foodmanual.mapper;
 
 import com.mhelrigo.foodmanual.model.meal.MealModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import mhelrigo.foodmanual.domain.entity.meal.MealEntity;
 
 @Singleton
@@ -126,7 +128,22 @@ public class MealModelMapper {
                 mealModel.isFavorite());
     }
 
+    private List<MealModel> transform(List<MealEntity> p0) {
+        List<MealModel> v0 = new ArrayList<>();
+
+        for (MealEntity v1 :
+                p0) {
+            v0.add(this.transform(v1));
+        }
+
+        return v0;
+    }
+
     public Observable<List<MealModel>> transform(Observable<MealEntity> mealObservable) {
         return mealObservable.map(this::transform).toList().toObservable();
+    }
+
+    public Single<List<MealModel>> transform(Single<List<MealEntity>> p0) {
+        return p0.map(this::transform);
     }
 }
