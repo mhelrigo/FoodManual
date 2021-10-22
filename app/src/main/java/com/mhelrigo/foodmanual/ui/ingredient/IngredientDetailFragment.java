@@ -63,7 +63,6 @@ public class IngredientDetailFragment extends BaseFragment<FragmentIngredientDet
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
                 .concatMapCompletable(mealModel -> mealViewModel.toggleFavoriteOfAMeal(mealModel)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))
                         .doOnComplete(() -> {
                             if (isTablet) {
                                 // Sync data on both screen

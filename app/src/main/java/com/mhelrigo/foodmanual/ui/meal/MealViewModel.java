@@ -255,6 +255,7 @@ public class MealViewModel extends ViewModel implements SyncMeals {
 
     public Completable toggleFavoriteOfAMeal(MealModel mealModel) {
         mealModel.setFavorite(!mealModel.isFavorite());
+        syncMeals(mealModel, MealViewModel.SYNC_MEALS_DEFAULT_INDEX);
 
         if (mealModel.isFavorite()) {
             return addFavoriteMeal

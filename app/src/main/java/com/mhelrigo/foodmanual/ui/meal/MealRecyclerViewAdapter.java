@@ -41,13 +41,6 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
 
     public PublishSubject<MealModel> expandDetail = PublishSubject.create();
 
-    public Completable toggleFavoriteOfADrink(MealModel p0) {
-        meals.getCurrentList().get(p0.getViewHolderIndex()).setFavorite(p0.isFavorite());
-        notifyItemChanged(p0.getViewHolderIndex());
-
-        return Completable.complete();
-    }
-
     public void submitList(List<MealModel> p0) {
         meals.submitList(p0);
     }
@@ -60,7 +53,11 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(meals.getCurrentList().get(position));
+        try {
+            holder.bind((MealModel) meals.getCurrentList().get(position).clone());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

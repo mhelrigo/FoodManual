@@ -92,7 +92,6 @@ public class MealDetailFragment extends BaseFragment<FragmentMealDetailBinding> 
                         .setOnClickListener(view -> mealViewModel.compositeDisposable.add(mealViewModel.toggleFavoriteOfAMeal(mealModel)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnComplete(() -> {
-                                    mealViewModel.syncMeals(mealModel, MealViewModel.SYNC_MEALS_DEFAULT_INDEX);
                                     mealViewModel.requestForFavoriteMeals();
                                     mealViewModel.setMealIdToBeSearched(mealModel.getIdMeal());
                                 }).subscribe()));

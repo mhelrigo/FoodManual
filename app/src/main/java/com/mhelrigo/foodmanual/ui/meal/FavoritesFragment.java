@@ -56,7 +56,6 @@ public class FavoritesFragment extends BaseFragment<FragmentFavoritesBinding> im
         Disposable v0 = mealRecyclerViewAdapter.toggleFavorite
                 .concatMapCompletable(mealModel -> mealViewModel.toggleFavoriteOfAMeal(mealModel)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .andThen(mealRecyclerViewAdapter.toggleFavoriteOfADrink(mealModel))
                         .doOnComplete(() -> {
                             mealViewModel.requestForFavoriteMeals();
                             if (isTablet) {
